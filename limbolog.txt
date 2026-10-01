@@ -1,0 +1,182 @@
+--------- beginning of system
+09-27 04:16:03.258 17626 17626 D AppResolutionTuner: loadTunerAppList + 
+09-27 04:16:03.259 17626 17626 W AppResolutionTuner: Target file doesn't exist: /data/retuner/sf_resolution_tuner_app_list.xml
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.ig', scale='1.2', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.tmgp.sgame', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.activision.callofduty.shooter', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.garena.game.codm', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.tmgp.kr.codm', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.vng.codmvn', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.activision.callofduty.codpbt', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.tmgp.cod', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.tmgp.pubgmhd', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.iglite', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.263 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.igce', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.rekoo.pubgm', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.pubg.krmobile', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.vng.pubgmobile', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.pubg.imobile', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='vn.vng.pubgmobile', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.garena.game.kgtw', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.garena.game.kgth', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.imangi.templerun2', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.mobile.legends', scale='1.1', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: loadTunerAppList - 
+09-27 04:16:03.264 17626 17626 D AppResolutionTuner: loadTunerAppList + 
+09-27 04:16:03.264 17626 17626 W AppResolutionTuner: Target file doesn't exist: /data/retuner/sf_resolution_tuner_app_list.xml
+09-27 04:16:03.265 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.ig', scale='1.2', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.265 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.tmgp.sgame', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.265 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.activision.callofduty.shooter', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.265 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.garena.game.codm', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.265 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.tmgp.kr.codm', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.265 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.vng.codmvn', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.265 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.activision.callofduty.codpbt', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.266 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.tmgp.cod', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.266 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.tmgp.pubgmhd', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.266 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.iglite', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.266 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.tencent.igce', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.266 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.rekoo.pubgm', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.266 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.pubg.krmobile', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.266 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.vng.pubgmobile', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.266 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.pubg.imobile', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.266 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='vn.vng.pubgmobile', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.267 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.garena.game.kgtw', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.267 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.garena.game.kgth', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.267 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.imangi.templerun2', scale='1.0', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.267 17626 17626 D AppResolutionTuner: dom2xml: App{packageName='com.mobile.legends', scale='1.1', filteredWindows= []', scalingFlow= surfaceview'}
+09-27 04:16:03.267 17626 17626 D AppResolutionTuner: loadTunerAppList - 
+09-27 04:16:03.350 17626 17626 D ViewRootImpl: setView appearance:0 com.limbo.emu.main.arm/com.max2idea.android.limbo.main.LimboSDLActivity
+09-27 04:16:03.425 17626 17626 W HeartRateOximetryLiceFactory: HeartRateOximetryLice is not supported
+09-27 04:16:04.023 17626 17626 D ViewRootImpl: setView appearance:0 Toast
+--------- beginning of main
+09-27 04:16:04.045 17626 20785 D mali_gralloc: register: id=28600117ca6, handle=0x7adc4092c0, importpid=17626
+09-27 04:16:04.047 17626 20785 D mali_gralloc: register: id=28600117ca7, handle=0x7adc4093a0, importpid=17626
+09-27 04:16:04.048 17626 20785 D mali_gralloc: register: id=28600117ca8, handle=0x7adc409560, importpid=17626
+09-27 04:16:04.050 17626 20785 D mali_gralloc: register: id=28600117ca9, handle=0x7adc409640, importpid=17626
+09-27 04:16:04.059 17626 17626 V SDL     : onPause()
+09-27 04:16:04.060 17626 17626 V SDL     : nativePause()
+09-27 04:16:04.060 17626 17626 D SensorManager: unregisterListenerImpl sensor = {Sensor name="acc_mxc4005", vendor="memsic", version=1, type=1, maxRange=78.4532, resolution=0.038326, power=0.17, minDelay=2500}, listener = com.max2idea.android.limbo.main.LimboSDLSurface{c131edc VFED..... .F...... 0,0-706,735 aid=1073741825}
+09-27 04:16:04.075 17626 17626 D VRI[LimboEmuActivity]: visibilityChanged oldVisibility=true newVisibility=false
+09-27 04:16:04.078 17626 17642 D mali_gralloc: unregister: id=28600117c12, handle=0x7adbb5dec0, base=0x0, importpid=17626, clone_count=0
+09-27 04:16:04.078 17626 17642 D mali_gralloc: unregister: id=28600117c15, handle=0x7adc40b6a0, base=0x0, importpid=17626, clone_count=0
+09-27 04:16:04.089 17626 17626 D mali_gralloc: unregister: id=28600117c13, handle=0x7ac8beec60, base=0x0, importpid=17626, clone_count=0
+09-27 04:16:04.089 17626 17626 D mali_gralloc: unregister: id=28600117c14, handle=0x7ac8ce78a0, base=0x0, importpid=17626, clone_count=0
+09-27 04:16:04.095 17626 17626 D LogUtil : mLogd_enable
+09-27 04:16:04.752 17626 20779 D MachineService: Starting VM: Window 11
+09-27 04:16:04.961 17626 20779 D VMExecutor: Params:
+09-27 04:16:04.961 17626 20779 D VMExecutor: 0: libqemu-system-aarch64.so
+09-27 04:16:04.961 17626 20779 D VMExecutor: 1: -monitor
+09-27 04:16:04.961 17626 20779 D VMExecutor: 2: none
+09-27 04:16:04.961 17626 20779 D VMExecutor: 3: -serial
+09-27 04:16:04.961 17626 20779 D VMExecutor: 4: none
+09-27 04:16:04.961 17626 20779 D VMExecutor: 5: -parallel
+09-27 04:16:04.961 17626 20779 D VMExecutor: 6: none
+09-27 04:16:04.961 17626 20779 D VMExecutor: 7: -k
+09-27 04:16:04.961 17626 20779 D VMExecutor: 8: en-us
+09-27 04:16:04.961 17626 20779 D VMExecutor: 9: -smp
+09-27 04:16:04.961 17626 20779 D VMExecutor: 10: 3
+09-27 04:16:04.961 17626 20779 D VMExecutor: 11: -M
+09-27 04:16:04.961 17626 20779 D VMExecutor: 12: versatilepb
+09-27 04:16:04.961 17626 20779 D VMExecutor: 13: -m
+09-27 04:16:04.961 17626 20779 D VMExecutor: 14: 2144
+09-27 04:16:04.961 17626 20779 D VMExecutor: 15: -drive
+09-27 04:16:04.961 17626 20779 D VMExecutor: 16: index=0,if=ide,media=disk,file=/content//com.android.externalstorage.documents/document/primary^^^3Aback^^^2Fqemu-0.10.0.tar.gz.tar
+09-27 04:16:04.961 17626 20779 D VMExecutor: 17: -vga
+09-27 04:16:04.961 17626 20779 D VMExecutor: 18: std
+09-27 04:16:04.961 17626 20779 D VMExecutor: 19: -net
+09-27 04:16:04.961 17626 20779 D VMExecutor: 20: user
+09-27 04:16:04.961 17626 20779 D VMExecutor: 21: -net
+09-27 04:16:04.961 17626 20779 D VMExecutor: 22: nic
+09-27 04:16:04.961 17626 20779 D VMExecutor: 23: -L
+09-27 04:16:04.961 17626 20779 D VMExecutor: 24: /data/user/0/com.limbo.emu.main.arm/cache/limbo/
+09-27 04:16:04.961 17626 20779 D VMExecutor: 25: -qmp
+09-27 04:16:04.961 17626 20779 D VMExecutor: 26: unix:/data/user/0/com.limbo.emu.main.arm/cache/qmpsocket,server,nowait
+09-27 04:16:04.961 17626 20779 D VMExecutor: 27: -overcommit
+09-27 04:16:04.961 17626 20779 D VMExecutor: 28: mem-lock=off
+09-27 04:16:04.961 17626 20779 D VMExecutor: 29: -rtc
+09-27 04:16:04.961 17626 20779 D VMExecutor: 30: base=localtime
+09-27 04:16:04.961 17626 20779 D VMExecutor: 31: -nodefaults
+09-27 04:16:04.961 17626 20779 D VMExecutor: 32: -accel
+09-27 04:16:04.961 17626 20779 D VMExecutor: 33: tcg,thread=multi
+09-27 04:16:04.963 17626 20779 V vm-executor-jni.c: Processing params
+09-27 04:16:04.964 17626 20779 D vm-executor-jni.c: Starting VM
+09-27 04:16:04.964 17626 20779 V vm-executor-jni.c: Loading lib: /data/app/~~3iQTINk-e-4NAp5yi-woJg==/com.limbo.emu.main.arm-S4KGgA5JchFEGSeD3vjPPQ==/lib/arm64/libqemu-system-aarch64.so
+09-27 04:16:04.966 17626 20779 D limbo_compat_filesystem.c: Closing fd: 213
+09-27 04:16:04.984 17626 20779 W limbo_compat_filesystem.c: Could not fopen: /data/user/0/com.limbo.emu.main.arm/cache/limbo//usr/local/etc/qemu/qemu.conf, r, 0x0
+09-27 04:16:05.036 17626 20779 E limbo_logutils.h: libqemu-system-aarch64.so:
+09-27 04:16:05.036 17626 20779 E limbo_logutils.h:  
+09-27 04:16:05.036 17626 20779 E limbo_logutils.h: Invalid SMP CPUs 3. The max CPUs supported by machine 'versatilepb' is 1
+09-27 04:16:05.036 17626 20779 E limbo_logutils.h: 
+09-27 04:16:05.145 17626 20779 I bo.emu.main.arm: hook_module_exit libgui_unisoc_utils.so over, handle:0x0
+--------- beginning of crash
+09-27 04:16:05.151 17626 17678 F libc    : FORTIFY: pthread_mutex_lock called on a destroyed mutex (0x7bf3679b28)
+09-27 04:16:05.152 17626 17679 F libc    : FORTIFY: pthread_mutex_lock called on a destroyed mutex (0x7bf3679b28)
+09-27 04:16:05.155 17626 17678 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 17678 (hwuiTask0), pid 17626 (bo.emu.main.arm)
+09-27 04:16:05.271 20842 20842 E crash_dump64: failed to get the guest state header for thread 17626: Bad address
+09-27 04:16:05.280 20842 20842 E crash_dump64: failed to get the guest state header for thread 17627: Bad address
+09-27 04:16:05.281 20842 20842 E crash_dump64: failed to get the guest state header for thread 17628: Bad address
+09-27 04:16:05.281 20842 20842 E crash_dump64: failed to get the guest state header for thread 17629: Bad address
+09-27 04:16:05.281 20842 20842 E crash_dump64: failed to get the guest state header for thread 17630: Bad address
+09-27 04:16:05.282 20842 20842 E crash_dump64: failed to get the guest state header for thread 17631: Bad address
+09-27 04:16:05.282 20842 20842 E crash_dump64: failed to get the guest state header for thread 17632: Bad address
+09-27 04:16:05.282 20842 20842 E crash_dump64: failed to get the guest state header for thread 17633: Bad address
+09-27 04:16:05.283 20842 20842 E crash_dump64: failed to get the guest state header for thread 17634: Bad address
+09-27 04:16:05.283 20842 20842 E crash_dump64: failed to get the guest state header for thread 17635: Bad address
+09-27 04:16:05.283 20842 20842 E crash_dump64: failed to get the guest state header for thread 17636: Bad address
+09-27 04:16:05.283 20842 20842 E crash_dump64: failed to get the guest state header for thread 17638: Bad address
+09-27 04:16:05.284 20842 20842 E crash_dump64: failed to get the guest state header for thread 17640: Bad address
+09-27 04:16:05.284 20842 20842 E crash_dump64: failed to get the guest state header for thread 17642: Bad address
+09-27 04:16:05.284 20842 20842 E crash_dump64: failed to get the guest state header for thread 17646: Bad address
+09-27 04:16:05.284 20842 20842 E crash_dump64: failed to get the guest state header for thread 17647: Bad address
+09-27 04:16:05.284 20842 20842 E crash_dump64: failed to get the guest state header for thread 17648: Bad address
+09-27 04:16:05.285 20842 20842 E crash_dump64: failed to get the guest state header for thread 17649: Bad address
+09-27 04:16:05.285 20842 20842 E crash_dump64: failed to get the guest state header for thread 17650: Bad address
+09-27 04:16:05.285 20842 20842 E crash_dump64: failed to get the guest state header for thread 17651: Bad address
+09-27 04:16:05.286 20842 20842 E crash_dump64: failed to get the guest state header for thread 17652: Bad address
+09-27 04:16:05.286 20842 20842 E crash_dump64: failed to get the guest state header for thread 17653: Bad address
+09-27 04:16:05.286 20842 20842 E crash_dump64: failed to get the guest state header for thread 17654: Bad address
+09-27 04:16:05.286 20842 20842 E crash_dump64: failed to get the guest state header for thread 17655: Bad address
+09-27 04:16:05.286 20842 20842 E crash_dump64: failed to get the guest state header for thread 17676: Bad address
+09-27 04:16:05.286 20842 20842 E crash_dump64: failed to get the guest state header for thread 17677: Bad address
+09-27 04:16:05.287 20842 20842 E crash_dump64: failed to get the guest state header for thread 17678: Bad address
+09-27 04:16:05.287 20842 20842 E crash_dump64: failed to get the guest state header for thread 17679: Bad address
+09-27 04:16:05.288 20842 20842 E crash_dump64: failed to get the guest state header for thread 17680: Bad address
+09-27 04:16:05.288 20842 20842 E crash_dump64: failed to get the guest state header for thread 17683: Bad address
+09-27 04:16:05.288 20842 20842 E crash_dump64: failed to get the guest state header for thread 17685: Bad address
+09-27 04:16:05.288 20842 20842 E crash_dump64: failed to get the guest state header for thread 17687: Bad address
+09-27 04:16:05.289 20842 20842 E crash_dump64: failed to get the guest state header for thread 17688: Bad address
+09-27 04:16:05.289 20842 20842 E crash_dump64: failed to get the guest state header for thread 17693: Bad address
+09-27 04:16:05.289 20842 20842 E crash_dump64: failed to get the guest state header for thread 17695: Bad address
+09-27 04:16:05.289 20842 20842 E crash_dump64: failed to get the guest state header for thread 17700: Bad address
+09-27 04:16:05.290 20842 20842 E crash_dump64: failed to get the guest state header for thread 17701: Bad address
+09-27 04:16:05.290 20842 20842 E crash_dump64: failed to get the guest state header for thread 18014: Bad address
+09-27 04:16:05.290 20842 20842 E crash_dump64: failed to get the guest state header for thread 18969: Bad address
+09-27 04:16:05.291 20842 20842 E crash_dump64: failed to get the guest state header for thread 19012: Bad address
+09-27 04:16:05.291 20842 20842 E crash_dump64: failed to get the guest state header for thread 19013: Bad address
+09-27 04:16:05.291 20842 20842 E crash_dump64: failed to get the guest state header for thread 19164: Bad address
+09-27 04:16:05.291 20842 20842 E crash_dump64: failed to get the guest state header for thread 19363: Bad address
+09-27 04:16:05.291 20842 20842 E crash_dump64: failed to get the guest state header for thread 19409: Bad address
+09-27 04:16:05.292 20842 20842 E crash_dump64: failed to get the guest state header for thread 19768: Bad address
+09-27 04:16:05.292 20842 20842 E crash_dump64: failed to get the guest state header for thread 20692: Bad address
+09-27 04:16:05.292 20842 20842 E crash_dump64: failed to get the guest state header for thread 20731: Bad address
+09-27 04:16:05.292 20842 20842 E crash_dump64: failed to get the guest state header for thread 20772: Bad address
+09-27 04:16:05.292 20842 20842 E crash_dump64: failed to get the guest state header for thread 20774: Bad address
+09-27 04:16:05.292 20842 20842 E crash_dump64: failed to get the guest state header for thread 20776: Bad address
+09-27 04:16:05.292 20842 20842 E crash_dump64: failed to get the guest state header for thread 20778: Bad address
+09-27 04:16:05.293 20842 20842 E crash_dump64: failed to get the guest state header for thread 20779: Bad address
+09-27 04:16:05.293 20842 20842 E crash_dump64: failed to get the guest state header for thread 20781: Bad address
+09-27 04:16:05.293 20842 20842 E crash_dump64: failed to get the guest state header for thread 20783: Bad address
+09-27 04:16:05.294 20842 20842 E crash_dump64: failed to get the guest state header for thread 20831: Bad address
+09-27 04:16:05.294 20842 20842 E crash_dump64: failed to get the guest state header for thread 20832: Bad address
+09-27 04:16:05.294 20842 20842 E crash_dump64: failed to get the guest state header for thread 20833: Bad address
+09-27 04:16:05.294 20842 20842 E crash_dump64: failed to get the guest state header for thread 20835: Bad address
+09-27 04:16:05.331 20842 20842 I crash_dump64: obtaining output fd from tombstoned, type: kDebuggerdTombstoneProto
+09-27 04:16:05.361 20842 20842 I crash_dump64: performing dump of process 17626 (target tid = 17678)
+09-27 04:16:05.473 17626 17626 V SDL     : onResume()
+09-27 04:16:05.474 17626 17626 V SDL     : nativeResume()
+09-27 04:16:05.474 17626 17626 D SensorManager: registerListenerImpl sensor = {Sensor name="acc_mxc4005", vendor="memsic", version=1, type=1, maxRange=78.4532, resolution=0.038326, power=0.17, minDelay=2500}, delayUs = 20000, latencyUs = 0, listener = com.max2idea.android.limbo.main.LimboSDLSurface{c131edc VFED..... .F...... 0,0-706,735 aid=1073741825}
+09-27 04:16:05.479 17626 17680 E ashmem  : Unable to open ashmem device ��L? (error = No such file or directory) and /dev/ashmem(error = Permission denied)
+09-27 04:16:05.477 17626 17626 W pool-3-thread-1: type=1400 audit(0.0:864077): avc:  denied  { open } for  path="/dev/ashmem" dev="tmpfs" ino=936 scontext=u:r:untrusted_app_29:s0:c157,c257,c512,c768 tcontext=u:object_r:ashmem_device:s0 tclass=chr_file permissive=0 app=com.limbo.emu.main.arm
+09-27 04:16:05.479 17626 17626 D LogUtil : mLogd_enable
+09-27 04:16:05.690 17626 17626 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda12@83ac92a
+09-27 04:16:05.697 17626 17642 F libc    : FORTIFY: pthread_mutex_lock called on a destroyed mutex (0x7b38776900)

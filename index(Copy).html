@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEGA Admin Panel</title>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<!-- EmailJS SDK -->
+<script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<style>
+  body { font-family:sans-serif; background:#f5f5f5; margin:0; padding:0; }
+  #adminPage, #loginPage { max-width:900px; margin:20px auto; background:#fff; padding:20px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.1); }
+  h1 { text-align:center; margin-bottom:20px; color:#1976D2; }
+  .tabs { display:flex; gap:10px; margin-bottom:16px; }
+  .tabs button { flex:1; padding:10px; border:none; border-radius:8px; background:#1976D2; color:white; cursor:pointer; font-weight:bold; }
+  .section { display:none; margin-top:12px; }
+  .section.active { display:block; }
+  .card { display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid #ddd; border-radius:10px; margin-bottom:10px; background:#fafafa; }
+  .card .info { display:flex; align-items:center; gap:12px; }
+  .avatar { width:40px; height:40px; border-radius:50%; background:#ccc; display:flex; justify-content:center; align-items:center; font-weight:bold; }
+  .card button { margin-left:6px; padding:6px 12px; border:none; border-radius:8px; cursor:pointer; }
+  .ban { background:#d32f2f; color:white; }
+  .verify { background:#388E3C; color:white; }
+  .search { padding:8px 10px; border-radius:8px; border:1px solid #ccc; width:100%; max-width:300px; margin-bottom:10px; }
+  .stats { display:flex; gap:20px; margin-bottom:16px; }
+  .stats div { padding:12px; border-radius:8px; background:#1976D2; color:white; font-weight:bold; flex:1; text-align:center; }
+  #loginPage input { padding:10px; border-radius:8px; border:1px solid #ccc; width:100%; margin-bottom:10px; }
+  #loginPage button { padding:10px; border:none; border-radius:8px; background:#1976D2; color:white; width:100%; cursor:pointer; font-weight:bold; }
+  #settingsPanel { margin-top:20px; padding:10px; border:1px solid #ccc; display:none; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <h1>Admin Login</h1>
+  <input type="text" id="otpCode" placeholder="Enter OTP" />
+  <button id="sendOtpBtn">Send OTP to Admin Email</button>
+  <button id="verifyOtpBtn">Verify OTP</button>
+  <hr>
+  <input type="password" id="passwordInput" placeholder="Enter Password" />
+  <button id="passwordLoginBtn">Login with Password</button>
+  <hr>
+  <button id="fingerprintLoginBtn">Login with Fingerprint</button>
+  <p id="loginMsg" style="color:red;"></p>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPage" style="display:none;">
+  <h1>MEGA Admin Panel</h1>
+  <button id="logoutBtn">Logout</button>
+  <button id="openSettingsBtn">Settings</button>
+
+  <div id="settingsPanel">
+    <h3>Settings</h3>
+    <label>Change Password:</label><br>
+    <input type="password" id="newPassword" placeholder="New password" /><br><br>
+    <button id="changePasswordBtn">Save Password</button>
+    <hr>
+    <label><input type="checkbox" id="enableFingerprint" /> Enable Fingerprint Login</label>
+  </div>
+
+  <div class="stats">
+    <div id="totalUsers">Users: 0</div>
+    <div id="totalChannels">Channels: 0</div>
+    <div id="totalReports">Reports: 0</div>
+  </div>
+
+  <div class="tabs">
+    <button data-tab="users">Users</button>
+    <button data-tab="channels">Channels</button>
+    <button data-tab="reports">Reports</button>
+  </div>
+
+  <div id="users" class="section">
+    <input id="searchUsers" class="search" placeholder="Search users by name or phone">
+    <div id="usersList"></div>
+  </div>
+
+  <div id="channels" class="section">
+    <input id="searchChannels" class="search" placeholder="Search channels">
+    <div id="channelsList"></div>
+  </div>
+
+  <div id="reports" class="section">
+    <input id="searchReports" class="search" placeholder="Search reports (from / to / reason)">
+    <div id="reportsList"></div>
+  </div>
+</div>
+
+<script>
+let adminPassword = "Atsegor123"; 
+let fingerprintEnabled = true;
+const adminEmailSender = "dianwilson66@gmail.com"; 
+const adminEmailReceiver = "dianwilson145@gmail.com"; 
+let generatedOtp = '';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD8-JOU1GSyVrjPf43UBBakwOgmaDLjCxA",
+  authDomain: "mega-910bd.firebaseapp.com",
+  projectId: "mega-910bd",
+  storageBucket: "mega-910bd.firebasestorage.app",
+  messagingSenderId: "1077865554196",
+  appId: "1:1077865554196:web:235e3c9bf3f1f57953e201"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+emailjs.init("VRknlm2rOD6rP669");
+
+const sendOtpBtn = document.getElementById('sendOtpBtn');
+const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+const otpInput = document.getElementById('otpCode');
+const passwordInput = document.getElementById('passwordInput');
+const passwordLoginBtn = document.getElementById('passwordLoginBtn');
+const fingerprintLoginBtn = document.getElementById('fingerprintLoginBtn');
+const loginMsg = document.getElementById('loginMsg');
+const logoutBtn = document.getElementById('logoutBtn');
+const openSettingsBtn = document.getElementById('openSettingsBtn');
+const settingsPanel = document.getElementById('settingsPanel');
+const newPasswordInput = document.getElementById('newPassword');
+const changePasswordBtn = document.getElementById('changePasswordBtn');
+const enableFingerprint = document.getElementById('enableFingerprint');
+
+function generateOtp(){ return Math.floor(100000 + Math.random()*900000).toString(); }
+
+function showAdminPanel(){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('adminPage').style.display='block';
+  loginMsg.textContent='';
+  loadData();
+}
+
+sendOtpBtn.addEventListener('click', ()=>{
+  generatedOtp = generateOtp();
+  emailjs.send(
+    "service_04ce3iq",
+    "template_b6c89qo",
+    { from_email: adminEmailSender, to_email: adminEmailReceiver, otp: generatedOtp },
+    "email_MJB1lmRD4ip7GfDrgf2IqAH2"
+  ).then(res => {
+    loginMsg.style.color='green';
+    loginMsg.textContent='OTP sent!';
+  }).catch(err=>{
+    console.log(err);
+    loginMsg.style.color='red';
+    loginMsg.textContent='Failed to send OTP';
+  });
+});
+
+verifyOtpBtn.addEventListener('click', ()=>{
+  if(otpInput.value.trim() === generatedOtp) showAdminPanel();
+  else { loginMsg.style.color='red'; loginMsg.textContent='Invalid OTP'; }
+});
+
+passwordLoginBtn.addEventListener('click', ()=>{
+  if(passwordInput.value.trim()===adminPassword) showAdminPanel();
+  else{ loginMsg.style.color='red'; loginMsg.textContent='Incorrect Password'; }
+});
+
+fingerprintLoginBtn.addEventListener('click', async ()=>{
+  if(!fingerprintEnabled) return;
+  try {
+    const { Biometric } = window.Capacitor.Plugins;
+    const result = await Biometric.authenticate({ reason: "Log in to MEGA Admin Panel" });
+    if(result.verified) showAdminPanel();
+  } catch(e){ console.log(e); loginMsg.style.color='red'; loginMsg.textContent="Fingerprint login failed"; }
+});
+
+logoutBtn.addEventListener('click', ()=>{
+  document.getElementById('loginPage').style.display='block';
+  document.getElementById('adminPage').style.display='none';
+  otpInput.value=''; passwordInput.value='';
+});
+
+openSettingsBtn.addEventListener('click', ()=>{ 
+  settingsPanel.style.display = settingsPanel.style.display==='none'?'block':'none'; 
+});
+
+changePasswordBtn.addEventListener('click', ()=>{
+  if(newPasswordInput.value.trim()!==''){
+    adminPassword = newPasswordInput.value.trim();
+    newPasswordInput.value='';
+    alert("Password changed successfully");
+  }
+});
+
+enableFingerprint.addEventListener('change', ()=>{ fingerprintEnabled = enableFingerprint.checked; });
+
+const tabs = document.querySelectorAll('.tabs button');
+const sections = document.querySelectorAll('.section');
+tabs.forEach(t=>{ t.addEventListener('click', ()=>{ sections.forEach(s=>s.classList.remove('active')); document.getElementById(t.dataset.tab).classList.add('active'); }); });
+sections[0].classList.add('active');
+
+async function loadData(){
+  const usersSnap = await db.collection('users').get();
+  const users = usersSnap.docs.map(d=>({id:d.id,...d.data()}));
+  document.getElementById('totalUsers').textContent = 'Users: '+users.length;
+  renderUsers(users);
+
+  const channelsSnap = await db.collection('channels').get();
+  const channels = channelsSnap.docs.map(d=>({id:d.id,...d.data()}));
+  document.getElementById('totalChannels').textContent = 'Channels: '+channels.length;
+  renderChannels(channels);
+
+  const reportsSnap = await db.collection('reports').get();
+  const reports = reportsSnap.docs.map(d=>({id:d.id,...d.data()}));
+  document.getElementById('totalReports').textContent = 'Reports: '+reports.length;
+  renderReports(reports);
+}
+
+function renderUsers(users){
+  const container = document.getElementById('usersList');
+  container.innerHTML='';
+  users.forEach(u=>{
+    const div = document.createElement('div');
+    div.className='card';
+    div.innerHTML = `
+      <div class="info">
+        <div class="avatar">${u.name?u.name[0]:'?'}</div>
+        <div><div><strong>${u.name||'No Name'}</strong></div><div>${u.phone||'No Phone'}</div></div>
+      </div>
+      <div>
+        <button class="ban">${u.banned?'Unban':'Ban'}</button>
+        <button class="verify">${u.verified?'Unverify':'Verify'}</button>
+      </div>
+    `;
+    container.appendChild(div);
+    div.querySelector('.ban').addEventListener('click', async ()=>{ await db.collection('users').doc(u.id).update({banned: !u.banned}); loadData(); });
+    div.querySelector('.verify').addEventListener('click', async ()=>{ await db.collection('users').doc(u.id).update({verified: !u.verified}); loadData(); });
+  });
+}
+
+function renderChannels(channels){
+  const container = document.getElementById('channelsList');
+  container.innerHTML='';
+  channels.forEach(c=>{
+    const div = document.createElement('div');
+    div.className='card';
+    div.innerHTML = `<div class="info"><div class="avatar">${c.name?c.name[0]:'?'}</div><div><strong>${c.name||'No Name'}</strong></div></div>`;
+    container.appendChild(div);
+  });
+}
+
+function renderReports(reports){
+  const container = document.getElementById('reportsList');
+  container.innerHTML='';
+  reports.forEach(r=>{
+    const div = document.createElement('div');
+    div.className='card';
+    div.innerHTML = `<div class="info"><div><strong>From:</strong> ${r.from||'Unknown'}</div><div><strong>To:</strong> ${r.to||'Unknown'}</div><div><strong>Reason:</strong> ${r.reason||'N/A'}</div></div>`;
+    container.appendChild(div);
+  });
+}
+
+document.getElementById('searchUsers').addEventListener('input', e=>{
+  const val=e.target.value.toLowerCase();
+  db.collection('users').get().then(snap=>{ renderUsers(snap.docs.map(d=>({id:d.id,...d.data()})).filter(u=>(u.name||'').toLowerCase().includes(val)||(u.phone||'').toLowerCase().includes(val))); });
+});
+document.getElementById('searchChannels').addEventListener('input', e=>{
+  const val=e.target.value.toLowerCase();
+  db.collection('channels').get().then(snap=>{ renderChannels(snap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>(c.name||'').toLowerCase().includes(val))); });
+});
+document.getElementById('searchReports').addEventListener('input', e=>{
+  const val=e.target.value.toLowerCase();
+  db.collection('reports').get().then(snap=>{ renderReports(snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>(r.from||'').toLowerCase().includes(val)||(r.to||'').toLowerCase().includes(val)||(r.reason||'').toLowerCase().includes(val))); });
+});
+</script>
+
+</body>
+</html>

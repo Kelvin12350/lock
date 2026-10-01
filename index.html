@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MEGA</title>
+  <style>
+    :root{
+      --red:#d32f2f;
+      --red-weak:#f6b2b2;
+      --bg:#ffffff;
+      --text:#111;
+      --muted:#666;
+      --radius:10px;
+      --maxw:420px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .wrap{
+      max-width:var(--maxw);
+      margin:28px auto;
+      padding:18px;
+    }
+
+    .card{
+      border-radius:14px;
+      padding:18px;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    /* Welcome */
+    #welcomePage .logo{
+      width:96px;height:96px;margin:0 auto 12px;border-radius:20px;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:28px;
+    }
+    #welcomePage h1{ margin:8px 0 6px; font-size:22px; text-align:center; }
+    #welcomePage p{ margin:0 0 18px; color:var(--muted); text-align:center; }
+
+    /* Small label */
+    .small-label{ display:block;margin-bottom:8px;color:var(--muted); font-size:13px; }
+
+    /* Number page (red theme) */
+    #numberPage h2{ margin:0 0 8px; font-size:20px; }
+    select.country, input.phone {
+      width:100%;
+      padding:12px 14px;
+      font-size:15px;
+      border-radius:10px;
+      border:1px solid #e6e6e6;
+      margin-bottom:12px;
+      background:#fff;
+    }
+    .row{ display:flex; gap:10px; align-items:center; }
+    .dial {
+      display:inline-block;
+      min-width:86px;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #e6e6e6;
+      text-align:center;
+      background:#fff;
+      font-weight:600;
+    }
+    .phone-wrap{flex:1}
+    .back-row{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+    .back-btn{ background:transparent;border:0;color:var(--red); font-weight:600; cursor:pointer; padding:6px 8px; border-radius:8px;}
+    .btn{
+      width:100%;
+      padding:12px;
+      border-radius:999px;
+      background:var(--red);
+      color:#fff;
+      border:0;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .btn:disabled{ opacity:0.65; cursor:not-allowed; background:var(--red-weak); color:#fff; }
+
+    .muted { color:var(--muted); font-size:13px; margin-top:8px; }
+
+    /* Verification */
+    .otp{
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      margin:18px 0;
+    }
+    .otp input{
+      width:44px;height:48px;border-radius:10px;border:1px solid #ddd;text-align:center;font-size:20px;
+    }
+    .countdown{ color:var(--red); font-weight:600; margin-top:8px; }
+    .small{ font-size:13px; color:var(--muted); margin-top:10px }
+
+    /* Responsive */
+    @media (max-width:420px){
+      .wrap{ padding:14px; margin:12px auto; }
+      .logo{ width:80px; height:80px; font-size:24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- WELCOME -->
+    <div id="welcomePage" class="card">
+      <div class="logo">MEGA</div>
+      <h1 data-key="welcome_title">Welcome to MEGA</h1>
+      <p data-key="welcome_sub">Reliable and secure messaging.</p>
+
+      <label for="languageSelect" class="small-label">Language</label>
+      <select id="languageSelect" class="country" aria-label="Select language"></select>
+
+      <button id="startBtn" class="btn" style="margin-top:14px">Continue</button>
+    </div>
+
+    <!-- NUMBER (after welcome) -->
+    <div id="numberPage" class="card" style="display:none;margin-top:18px">
+      <div class="back-row">
+        <button id="backToWelcome" class="back-btn">&larr; Back</button>
+        <h2 style="margin:0" data-key="enter_phone">Enter your phone number</h2>
+      </div>
+
+      <p class="small" data-key="verify_info">Please confirm your country code and enter your phone number.</p>
+
+      <label for="countrySelect" class="small-label">Country</label>
+      <select id="countrySelect" class="country" aria-label="Select country"></select>
+
+      <div class="row" style="margin-top:8px">
+        <div id="dialDisplay" class="dial">+234</div>
+        <div class="phone-wrap">
+          <input id="phoneInput" class="phone" type="tel" inputmode="numeric" placeholder="Phone number (no country code)" />
+        </div>
+      </div>
+
+      <div id="phoneError" class="small" style="color:#cc3333; display:none; margin-top:6px"></div>
+
+      <button id="toVerifyBtn" class="btn" disabled style="margin-top:12px">Next</button>
+      <p class="muted" style="margin-top:10px">By continuing, you agree to MEGA's Terms. You will receive an SMS with a verification code.</p>
+    </div>
+
+    <!-- VERIFICATION -->
+    <div id="verifyPage" class="card" style="display:none;margin-top:18px">
+      <div class="back-row">
+        <button id="backToNumber" class="back-btn">&larr; Back</button>
+        <h2 style="margin:0" data-key="verify_header">Verify your number</h2>
+      </div>
+
+      <p class="small" id="verifySubStatic">Enter the 6-digit code sent to <span id="sentTo"></span></p>
+
+      <div class="otp" aria-label="Enter verification code">
+        <input class="otp-input" maxlength="1" inputmode="numeric" />
+        <input class="otp-input" maxlength="1" inputmode="numeric" />
+        <input class="otp-input" maxlength="1" inputmode="numeric" />
+        <input class="otp-input" maxlength="1" inputmode="numeric" />
+        <input class="otp-input" maxlength="1" inputmode="numeric" />
+        <input class="otp-input" maxlength="1" inputmode="numeric" />
+      </div>
+
+      <div style="text-align:center">
+        <button id="verifyBtn" class="btn">Verify</button>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+        <div class="small muted" id="resendNote">You can resend in <span id="resendTimer">--</span></div>
+        <button id="resendBtn" class="btn" style="width:auto;padding:8px 12px" disabled>Resend</button>
+      </div>
+
+      <div id="verifyError" class="small" style="color:#cc3333; display:none; margin-top:8px"></div>
+    </div>
+
+  </div>
+
+  <script>
+  /* =============================================================
+     LANGUAGES, TRANSLATIONS, COUNTRIES (all in one file)
+     - No flags included.
+     ============================================================= */
+
+  const LANGUAGES = [
+    {code:"af",name:"Afrikaans"},{code:"am",name:"Amharic"},{code:"ar",name:"Arabic"},
+    {code:"az",name:"Azerbaijani"},{code:"be",name:"Belarusian"},{code:"bg",name:"Bulgarian"},
+    {code:"bn",name:"Bengali"},{code:"bs",name:"Bosnian"},{code:"ca",name:"Catalan"},
+    {code:"ceb",name:"Cebuano"},{code:"cs",name:"Czech"},{code:"cy",name:"Welsh"},
+    {code:"da",name:"Danish"},{code:"de",name:"German"},{code:"el",name:"Greek"},
+    {code:"en",name:"English"},{code:"eo",name:"Esperanto"},{code:"es",name:"Spanish"},
+    {code:"et",name:"Estonian"},{code:"eu",name:"Basque"},{code:"fa",name:"Persian"},
+    {code:"fi",name:"Finnish"},{code:"fr",name:"French"},{code:"ga",name:"Irish"},
+    {code:"gd",name:"Scottish Gaelic"},{code:"gl",name:"Galician"},{code:"gu",name:"Gujarati"},
+    {code:"ha",name:"Hausa"},{code:"haw",name:"Hawaiian"},{code:"he",name:"Hebrew"},
+    {code:"hi",name:"Hindi"},{code:"hmn",name:"Hmong"},{code:"hr",name:"Croatian"},
+    {code:"ht",name:"Haitian Creole"},{code:"hu",name:"Hungarian"},{code:"hy",name:"Armenian"},
+    {code:"id",name:"Indonesian"},{code:"ig",name:"Igbo"},{code:"is",name:"Icelandic"},
+    {code:"it",name:"Italian"},{code:"ja",name:"Japanese"},{code:"jv",name:"Javanese"},
+    {code:"ka",name:"Georgian"},{code:"kk",name:"Kazakh"},{code:"km",name:"Khmer"},
+    {code:"kn",name:"Kannada"},{code:"ko",name:"Korean"},{code:"ku",name:"Kurdish"},
+    {code:"ky",name:"Kyrgyz"},{code:"la",name:"Latin"},{code:"lb",name:"Luxembourgish"},
+    {code:"lo",name:"Lao"},{code:"lt",name:"Lithuanian"},{code:"lv",name:"Latvian"},
+    {code:"mg",name:"Malagasy"},{code:"mi",name:"Maori"},{code:"mk",name:"Macedonian"},
+    {code:"ml",name:"Malayalam"},{code:"mn",name:"Mongolian"},{code:"mr",name:"Marathi"},
+    {code:"ms",name:"Malay"},{code:"mt",name:"Maltese"},{code:"my",name:"Burmese"},
+    {code:"ne",name:"Nepali"},{code:"nl",name:"Dutch"},{code:"no",name:"Norwegian"},
+    {code:"ny",name:"Nyanja"},{code:"pa",name:"Punjabi"},{code:"pl",name:"Polish"},
+    {code:"ps",name:"Pashto"},{code:"pt",name:"Portuguese"},{code:"ro",name:"Romanian"},
+    {code:"ru",name:"Russian"},{code:"rw",name:"Kinyarwanda"},{code:"sd",name:"Sindhi"},
+    {code:"si",name:"Sinhala"},{code:"sk",name:"Slovak"},{code:"sl",name:"Slovenian"},
+    {code:"sm",name:"Samoan"},{code:"sn",name:"Shona"},{code:"so",name:"Somali"},
+    {code:"sq",name:"Albanian"},{code:"sr",name:"Serbian"},{code:"st",name:"Sesotho"},
+    {code:"su",name:"Sundanese"},{code:"sv",name:"Swedish"},{code:"sw",name:"Swahili"},
+    {code:"ta",name:"Tamil"},{code:"te",name:"Telugu"},{code:"tg",name:"Tajik"},
+    {code:"th",name:"Thai"},{code:"tk",name:"Turkmen"},{code:"tl",name:"Tagalog"},
+    {code:"tr",name:"Turkish"},{code:"tt",name:"Tatar"},{code:"ug",name:"Uyghur"},
+    {code:"uk",name:"Ukrainian"},{code:"ur",name:"Urdu"},{code:"uz",name:"Uzbek"},
+    {code:"vi",name:"Vietnamese"},{code:"xh",name:"Xhosa"},{code:"yi",name:"Yiddish"},
+    {code:"yo",name:"Yoruba"},{code:"zh",name:"Chinese"},{code:"zu",name:"Zulu"}
+  ];
+
+  const TRANSLATIONS = {
+    en: {
+      welcome_title: "Welcome to MEGA",
+      welcome_sub: "Reliable and secure messaging.",
+      enter_phone: "Enter your phone number",
+      verify_info: "Please confirm your country code and enter your phone number.",
+      verify_header: "Verify your number",
+      verify_sub: "Enter the 6-digit code sent to",
+      continue_btn: "Continue",
+      next_btn: "Next",
+      verify_btn: "Verify",
+      resend_btn: "Resend",
+      resend_blocked: "Resend blocked for 24 hours",
+      resend_available: "Resend available in"
+    },
+    es: {
+      welcome_title: "Bienvenido a MEGA",
+      welcome_sub: "Mensajería fiable y segura.",
+      enter_phone: "Introduce tu número de teléfono",
+      verify_info: "Confirma tu código de país e introduce tu número de teléfono.",
+      verify_header: "Verifica tu número",
+      verify_sub: "Introduce el código de 6 dígitos enviado a",
+      continue_btn: "Continuar",
+      next_btn: "Siguiente",
+      verify_btn: "Verificar",
+      resend_btn: "Reenviar",
+      resend_blocked: "Reenvío bloqueado por 24 horas",
+      resend_available: "Reenvío disponible en"
+    },
+    fr: {
+      welcome_title: "Bienvenue sur MEGA",
+      welcome_sub: "Messagerie fiable et sécurisée.",
+      enter_phone: "Entrez votre numéro de téléphone",
+      verify_info: "Confirmez l'indicatif de votre pays et entrez votre numéro.",
+      verify_header: "Vérifiez votre numéro",
+      verify_sub: "Entrez le code à 6 chiffres envoyé à",
+      continue_btn: "Continuer",
+      next_btn: "Suivant",
+      verify_btn: "Vérifier",
+      resend_btn: "Renvoyer",
+      resend_blocked: "Renvoyer bloqué pendant 24 heures",
+      resend_available: "Renvoyer disponible dans"
+    },
+    pt: {
+      welcome_title: "Bem-vindo ao MEGA",
+      welcome_sub: "Mensagens seguras e confiáveis.",
+      enter_phone: "Insira seu número de telefone",
+      verify_info: "Confirme o código do país e insira seu número de telefone.",
+      verify_header: "Verifique seu número",
+      verify_sub: "Insira o código de 6 dígitos enviado para",
+      continue_btn: "Continuar",
+      next_btn: "Próximo",
+      verify_btn: "Verificar",
+      resend_btn: "Reenviar",
+      resend_blocked: "Reenvio bloqueado por 24 horas",
+      resend_available: "Reenvio disponível em"
+    },
+    de: {
+      welcome_title: "Willkommen bei MEGA",
+      welcome_sub: "Zuverlässige und sichere Nachrichten.",
+      enter_phone: "Geben Sie Ihre Telefonnummer ein",
+      verify_info: "Bestätigen Sie Ihre Ländervorwahl und geben Sie Ihre Telefonnummer ein.",
+      verify_header: "Verifizieren Sie Ihre Nummer",
+      verify_sub: "Geben Sie den 6-stelligen Code ein, der an gesendet wurde",
+      continue_btn: "Weiter",
+      next_btn: "Weiter",
+      verify_btn: "Überprüfen",
+      resend_btn: "Erneut senden",
+      resend_blocked: "Erneutes Senden für 24 Stunden blockiert",
+      resend_available: "Erneut senden verfügbar in"
+    },
+    ru: {
+      welcome_title: "Добро пожаловать в MEGA",
+      welcome_sub: "Надёжные и безопасные сообщения.",
+      enter_phone: "Введите номер телефона",
+      verify_info: "Подтвердите код страны и введите номер телефона.",
+      verify_header: "Подтвердите номер",
+      verify_sub: "Введите 6-значный код, отправленный на",
+      continue_btn: "Продолжить",
+      next_btn: "Далее",
+      verify_btn: "Подтвердить",
+      resend_btn: "Отправить снова",
+      resend_blocked: "Отправка заблокирована на 24 часа",
+      resend_available: "Повторная отправка доступна через"
+    },
+    ar: {
+      welcome_title: "مرحبًا بك في MEGA",
+      welcome_sub: "مراسلة آمنة وموثوقة.",
+      enter_phone: "أدخل رقم هاتفك",
+      verify_info: "الرجاء تأكيد رمز البلد وإدخال رقم هاتفك.",
+      verify_header: "تحقق من رقمك",
+      verify_sub: "أدخل رمز التحقق المكون من 6 أرقام المرسل إلى",
+      continue_btn: "استمرار",
+      next_btn: "التالي",
+      verify_btn: "تحقق",
+      resend_btn: "إعادة الإرسال",
+      resend_blocked: "تم حظر الإعادة لمدة 24 ساعة",
+      resend_available: "إمكانية إعادة الإرسال خلال"
+    },
+    zh: {
+      welcome_title: "欢迎来到MEGA",
+      welcome_sub: "可靠且安全的消息服务。",
+      enter_phone: "输入您的电话号码",
+      verify_info: "请确认您的国家代码并输入您的电话号码。",
+      verify_header: "验证您的号码",
+      verify_sub: "输入发送到 的 6 位验证码",
+      continue_btn: "继续",
+      next_btn: "下一步",
+      verify_btn: "验证",
+      resend_btn: "重新发送",
+      resend_blocked: "已被封禁 24 小时",
+      resend_available: "重新发送可用时间"
+    },
+    hi: {
+      welcome_title: "MEGA में आपका स्वागत है",
+      welcome_sub: "भरोसेमंद और सुरक्षित संदेश।",
+      enter_phone: "अपना फ़ोन नंबर दर्ज करें",
+      verify_info: "कृपया अपना देश कोड पुष्टि करें और अपना फ़ोन नंबर दर्ज करें।",
+      verify_header: "अपना नंबर सत्यापित करें",
+      verify_sub: "उस नंबर पर भेजा गया 6-अंकीय कोड दर्ज करें",
+      continue_btn: "जारी रखें",
+      next_btn: "आगे",
+      verify_btn: "सत्यापित करें",
+      resend_btn: "पुनः भेजें",
+      resend_blocked: "24 घंटे के लिए ब्लॉक कर दिया गया",
+      resend_available: "पुनः भेजना उपलब्ध"
+    }
+  };
+
+  const COUNTRIES = [
+  { "name": "Afghanistan", "code": "AF", "dial_code": "+93" },
+  { "name": "Albania", "code": "AL", "dial_code": "+355" },
+  { "name": "Algeria", "code": "DZ", "dial_code": "+213" },
+  { "name": "Andorra", "code": "AD", "dial_code": "+376" },
+  { "name": "Angola", "code": "AO", "dial_code": "+244" },
+  { "name": "Antigua and Barbuda", "code": "AG", "dial_code": "+1-268" },
+  { "name": "Argentina", "code": "AR", "dial_code": "+54" },
+  { "name": "Armenia", "code": "AM", "dial_code": "+374" },
+  { "name": "Aruba", "code": "AW", "dial_code": "+297" },
+  { "name": "Australia", "code": "AU", "dial_code": "+61" },
+  { "name": "Austria", "code": "AT", "dial_code": "+43" },
+  { "name": "Azerbaijan", "code": "AZ", "dial_code": "+994" },
+  { "name": "Bahamas", "code": "BS", "dial_code": "+1-242" },
+  { "name": "Bahrain", "code": "BH", "dial_code": "+973" },
+  { "name": "Bangladesh", "code": "BD", "dial_code": "+880" },
+  { "name": "Barbados", "code": "BB", "dial_code": "+1-246" },
+  { "name": "Belarus", "code": "BY", "dial_code": "+375" },
+  { "name": "Belgium", "code": "BE", "dial_code": "+32" },
+  { "name": "Belize", "code": "BZ", "dial_code": "+501" },
+  { "name": "Benin", "code": "BJ", "dial_code": "+229" },
+  { "name": "Bermuda", "code": "BM", "dial_code": "+1-441" },
+  { "name": "Bhutan", "code": "BT", "dial_code": "+975" },
+  { "name": "Bolivia", "code": "BO", "dial_code": "+591" },
+  { "name": "Bosnia and Herzegovina", "code": "BA", "dial_code": "+387" },
+  { "name": "Botswana", "code": "BW", "dial_code": "+267" },
+  { "name": "Brazil", "code": "BR", "dial_code": "+55" },
+  { "name": "Brunei", "code": "BN", "dial_code": "+673" },
+  { "name": "Bulgaria", "code": "BG", "dial_code": "+359" },
+  { "name": "Burkina Faso", "code": "BF", "dial_code": "+226" },
+  { "name": "Burundi", "code": "BI", "dial_code": "+257" },
+  { "name": "Cambodia", "code": "KH", "dial_code": "+855" },
+  { "name": "Cameroon", "code": "CM", "dial_code": "+237" },
+  { "name": "Canada", "code": "CA", "dial_code": "+1" },
+  { "name": "Cape Verde", "code": "CV", "dial_code": "+238" },
+  { "name": "Cayman Islands", "code": "KY", "dial_code": "+1-345" },
+  { "name": "Central African Republic", "code": "CF", "dial_code": "+236" },
+  { "name": "Chad", "code": "TD", "dial_code": "+235" },
+  { "name": "Chile", "code": "CL", "dial_code": "+56" },
+  { "name": "China", "code": "CN", "dial_code": "+86" },
+  { "name": "Colombia", "code": "CO", "dial_code": "+57" },
+  { "name": "Comoros", "code": "KM", "dial_code": "+269" },
+  { "name": "Congo (Brazzaville)", "code": "CG", "dial_code": "+242" },
+  { "name": "Congo (Kinshasa)", "code": "CD", "dial_code": "+243" },
+  { "name": "Costa Rica", "code": "CR", "dial_code": "+506" },
+  { "name": "Côte d'Ivoire", "code": "CI", "dial_code": "+225" },
+  { "name": "Croatia", "code": "HR", "dial_code": "+385" },
+  { "name": "Cuba", "code": "CU", "dial_code": "+53" },
+  { "name": "Curaçao", "code": "CW", "dial_code": "+599" },
+  { "name": "Cyprus", "code": "CY", "dial_code": "+357" },
+  { "name": "Czech Republic", "code": "CZ", "dial_code": "+420" },
+  { "name": "Denmark", "code": "DK", "dial_code": "+45" },
+  { "name": "Djibouti", "code": "DJ", "dial_code": "+253" },
+  { "name": "Dominica", "code": "DM", "dial_code": "+1-767" },
+  { "name": "Dominican Republic", "code": "DO", "dial_code": "+1-809" },
+  { "name": "Ecuador", "code": "EC", "dial_code": "+593" },
+  { "name": "Egypt", "code": "EG", "dial_code": "+20" },
+  { "name": "El Salvador", "code": "SV", "dial_code": "+503" },
+  { "name": "Equatorial Guinea", "code": "GQ", "dial_code": "+240" },
+  { "name": "Eritrea", "code": "ER", "dial_code": "+291" },
+  { "name": "Estonia", "code": "EE", "dial_code": "+372" },
+  { "name": "Eswatini", "code": "SZ", "dial_code": "+268" },
+  { "name": "Ethiopia", "code": "ET", "dial_code": "+251" },
+  { "name": "Falkland Islands", "code": "FK", "dial_code": "+500" },
+  { "name": "Faroe Islands", "code": "FO", "dial_code": "+298" },
+  { "name": "Fiji", "code": "FJ", "dial_code": "+679" },
+  { "name": "Finland", "code": "FI", "dial_code": "+358" },
+  { "name": "France", "code": "FR", "dial_code": "+33" },
+  { "name": "French Guiana", "code": "GF", "dial_code": "+594" },
+  { "name": "French Polynesia", "code": "PF", "dial_code": "+689" },
+  { "name": "Gabon", "code": "GA", "dial_code": "+241" },
+  { "name": "Gambia", "code": "GM", "dial_code": "+220" },
+  { "name": "Georgia", "code": "GE", "dial_code": "+995" },
+  { "name": "Germany", "code": "DE", "dial_code": "+49" },
+  { "name": "Ghana", "code": "GH", "dial_code": "+233" },
+  { "name": "Gibraltar", "code": "GI", "dial_code": "+350" },
+  { "name": "Greece", "code": "GR", "dial_code": "+30" },
+  { "name": "Greenland", "code": "GL", "dial_code": "+299" },
+  { "name": "Grenada", "code": "GD", "dial_code": "+1-473" },
+  { "name": "Guadeloupe", "code": "GP", "dial_code": "+590" },
+  { "name": "Guam", "code": "GU", "dial_code": "+1-671" },
+  { "name": "Guatemala", "code": "GT", "dial_code": "+502" },
+  { "name": "Guernsey", "code": "GG", "dial_code": "+44" },
+  { "name": "Guinea", "code": "GN", "dial_code": "+224" },
+  { "name": "Guinea-Bissau", "code": "GW", "dial_code": "+245" },
+  { "name": "Guyana", "code": "GY", "dial_code": "+592" },
+  { "name": "Haiti", "code": "HT", "dial_code": "+509" },
+  { "name": "Honduras", "code": "HN", "dial_code": "+504" },
+  { "name": "Hong Kong", "code": "HK", "dial_code": "+852" },
+  { "name": "Hungary", "code": "HU", "dial_code": "+36" },
+  { "name": "Iceland", "code": "IS", "dial_code": "+354" },
+  { "name": "India", "code": "IN", "dial_code": "+91" },
+  { "name": "Indonesia", "code": "ID", "dial_code": "+62" },
+  { "name": "Iran", "code": "IR", "dial_code": "+98" },
+  { "name": "Iraq", "code": "IQ", "dial_code": "+964" },
+  { "name": "Ireland", "code": "IE", "dial_code": "+353" },
+  { "name": "Isle of Man", "code": "IM", "dial_code": "+44" },
+  { "name": "Israel", "code": "IL", "dial_code": "+972" },
+  { "name": "Italy", "code": "IT", "dial_code": "+39" },
+  { "name": "Jamaica", "code": "JM", "dial_code": "+1-876" },
+  { "name": "Japan", "code": "JP", "dial_code": "+81" },
+  { "name": "Jersey", "code": "JE", "dial_code": "+44" },
+  { "name": "Jordan", "code": "JO", "dial_code": "+962" },
+  { "name": "Kazakhstan", "code": "KZ", "dial_code": "+7" },
+  { "name": "Kenya", "code": "KE", "dial_code": "+254" },
+  { "name": "Kiribati", "code": "KI", "dial_code": "+686" },
+  { "name": "Kosovo", "code": "XK", "dial_code": "+383" },
+  { "name": "Kuwait", "code": "KW", "dial_code": "+965" },
+  { "name": "Kyrgyzstan", "code": "KG", "dial_code": "+996" },
+  { "name": "Laos", "code": "LA", "dial_code": "+856" },
+  { "name": "Latvia", "code": "LV", "dial_code": "+371" },
+  { "name": "Lebanon", "code": "LB", "dial_code": "+961" },
+  { "name": "Lesotho", "code": "LS", "dial_code": "+266" },
+  { "name": "Liberia", "code": "LR", "dial_code": "+231" },
+  { "name": "Libya", "code": "LY", "dial_code": "+218" },
+  { "name": "Liechtenstein", "code": "LI", "dial_code": "+423" },
+  { "name": "Lithuania", "code": "LT", "dial_code": "+370" },
+  { "name": "Luxembourg", "code": "LU", "dial_code": "+352" },
+  { "name": "Macao", "code": "MO", "dial_code": "+853" },
+  { "name": "Madagascar", "code": "MG", "dial_code": "+261" },
+  { "name": "Malawi", "code": "MW", "dial_code": "+265" },
+  { "name": "Malaysia", "code": "MY", "dial_code": "+60" },
+  { "name": "Maldives", "code": "MV", "dial_code": "+960" },
+  { "name": "Mali", "code": "ML", "dial_code": "+223" },
+  { "name": "Malta", "code": "MT", "dial_code": "+356" },
+  { "name": "Marshall Islands", "code": "MH", "dial_code": "+692" },
+  { "name": "Martinique", "code": "MQ", "dial_code": "+596" },
+  { "name": "Mauritania", "code": "MR", "dial_code": "+222" },
+  { "name": "Mauritius", "code": "MU", "dial_code": "+230" },
+  { "name": "Mayotte", "code": "YT", "dial_code": "+262" },
+  { "name": "Mexico", "code": "MX", "dial_code": "+52" },
+  { "name": "Micronesia", "code": "FM", "dial_code": "+691" },
+  { "name": "Moldova", "code": "MD", "dial_code": "+373" },
+  { "name": "Monaco", "code": "MC", "dial_code": "+377" },
+  { "name": "Mongolia", "code": "MN", "dial_code": "+976" },
+  { "name": "Montenegro", "code": "ME", "dial_code": "+382" },
+  { "name": "Montserrat", "code": "MS", "dial_code": "+1-664" },
+  { "name": "Morocco", "code": "MA", "dial_code": "+212" },
+  { "name": "Mozambique", "code": "MZ", "dial_code": "+258" },
+  { "name": "Myanmar", "code": "MM", "dial_code": "+95" },
+  { "name": "Namibia", "code": "NA", "dial_code": "+264" },
+  { "name": "Nauru", "code": "NR", "dial_code": "+674" },
+  { "name": "Nepal", "code": "NP", "dial_code": "+977" },
+  { "name": "Netherlands", "code": "NL", "dial_code": "+31" },
+  { "name": "New Caledonia", "code": "NC", "dial_code": "+687" },
+  { "name": "New Zealand", "code": "NZ", "dial_code": "+64" },
+  { "name": "Nicaragua", "code": "NI", "dial_code": "+505" },
+  { "name": "Niger", "code": "NE", "dial_code": "+227" },
+  { "name": "Nigeria", "code": "NG", "dial_code": "+234" },
+  { "name": "North Korea", "code": "KP", "dial_code": "+850" },
+  { "name": "North Macedonia", "code": "MK", "dial_code": "+389" },
+  { "name": "Northern Mariana Islands", "code": "MP", "dial_code": "+1-670" },
+  { "name": "Norway", "code": "NO", "dial_code": "+47" },
+  { "name": "Oman", "code": "OM", "dial_code": "+968" },
+  { "name": "Pakistan", "code": "PK", "dial_code": "+92" },
+  { "name": "Palau", "code": "PW", "dial_code": "+680" },
+  { "name": "Panama", "code": "PA", "dial_code": "+507" },
+  { "name": "Papua New Guinea", "code": "PG", "dial_code": "+675" },
+  { "name": "Paraguay", "code": "PY", "dial_code": "+595" },
+  { "name": "Peru", "code": "PE", "dial_code": "+51" },
+  { "name": "Philippines", "code": "PH", "dial_code": "+63" },
+  { "name": "Pitcairn Islands", "code": "PN", "dial_code": "+870" },
+  { "name": "Poland", "code": "PL", "dial_code": "+48" },
+  { "name": "Portugal", "code": "PT", "dial_code": "+351" },
+  { "name": "Puerto Rico", "code": "PR", "dial_code": "+1-787" },
+  { "name": "Qatar", "code": "QA", "dial_code": "+974" },
+  { "name": "Réunion", "code": "RE", "dial_code": "+262" },
+  { "name": "Romania", "code": "RO", "dial_code": "+40" },
+  { "name": "Russia", "code": "RU", "dial_code": "+7" },
+  { "name": "Rwanda", "code": "RW", "dial_code": "+250" },
+  { "name": "Saint Barthélemy", "code": "BL", "dial_code": "+590" },
+  { "name": "Saint Helena", "code": "SH", "dial_code": "+290" },
+  { "name": "Saint Kitts and Nevis", "code": "KN", "dial_code": "+1-869" },
+  { "name": "Saint Lucia", "code": "LC", "dial_code": "+1-758" },
+  { "name": "Saint Martin", "code": "MF", "dial_code": "+590" },
+  { "name": "Saint Pierre and Miquelon", "code": "PM", "dial_code": "+508" },
+  { "name": "Saint Vincent and the Grenadines", "code": "VC", "dial_code": "+1-784" },
+  { "name": "Samoa", "code": "WS", "dial_code": "+685" },
+  { "name": "San Marino", "code": "SM", "dial_code": "+378" },
+  { "name": "Sao Tome and Principe", "code": "ST", "dial_code": "+239" },
+  { "name": "Saudi Arabia", "code": "SA", "dial_code": "+966" },
+  { "name": "Senegal", "code": "SN", "dial_code": "+221" },
+  { "name": "Serbia", "code": "RS", "dial_code": "+381" },
+  { "name": "Seychelles", "code": "SC", "dial_code": "+248" },
+  { "name": "Sierra Leone", "code": "SL", "dial_code": "+232" },
+  { "name": "Singapore", "code": "SG", "dial_code": "+65" },
+  { "name": "Sint Maarten", "code": "SX", "dial_code": "+1-721" },
+  { "name": "Slovakia", "code": "SK", "dial_code": "+421" },
+  { "name": "Slovenia", "code": "SI", "dial_code": "+386" },
+  { "name": "Solomon Islands", "code": "SB", "dial_code": "+677" },
+  { "name": "Somalia", "code": "SO", "dial_code": "+252" },
+  { "name": "South Africa", "code": "ZA", "dial_code": "+27" },
+  { "name": "South Korea", "code": "KR", "dial_code": "+82" },
+  { "name": "South Sudan", "code": "SS", "dial_code": "+211" },
+  { "name": "Spain", "code": "ES", "dial_code": "+34" },
+  { "name": "Sri Lanka", "code": "LK", "dial_code": "+94" },
+  { "name": "Sudan", "code": "SD", "dial_code": "+249" },
+  { "name": "Suriname", "code": "SR", "dial_code": "+597" },
+  { "name": "Svalbard and Jan Mayen", "code": "SJ", "dial_code": "+47" },
+  { "name": "Sweden", "code": "SE", "dial_code": "+46" },
+  { "name": "Switzerland", "code": "CH", "dial_code": "+41" },
+  { "name": "Syria", "code": "SY", "dial_code": "+963" },
+  { "name": "Taiwan", "code": "TW", "dial_code": "+886" },
+  { "name": "Tajikistan", "code": "TJ", "dial_code": "+992" },
+  { "name": "Tanzania", "code": "TZ", "dial_code": "+255" },
+  { "name": "Thailand", "code": "TH", "dial_code": "+66" },
+  { "name": "Timor-Leste", "code": "TL", "dial_code": "+670" },
+  { "name": "Togo", "code": "TG", "dial_code": "+228" },
+  { "name": "Tonga", "code": "TO", "dial_code": "+676" },
+  { "name": "Trinidad and Tobago", "code": "TT", "dial_code": "+1-868" },
+  { "name": "Tunisia", "code": "TN", "dial_code": "+216" },
+  { "name": "Turkey", "code": "TR", "dial_code": "+90" },
+  { "name": "Turkmenistan", "code": "TM", "dial_code": "+993" },
+  { "name": "Turks and Caicos Islands", "code": "TC", "dial_code": "+1-649" },
+  { "name": "Tuvalu", "code": "TV", "dial_code": "+688" },
+  { "name": "U.S. Virgin Islands", "code": "VI", "dial_code": "+1-340" },
+  { "name": "Uganda", "code": "UG", "dial_code": "+256" },
+  { "name": "Ukraine", "code": "UA", "dial_code": "+380" },
+  { "name": "United Arab Emirates", "code": "AE", "dial_code": "+971" },
+  { "name": "United Kingdom", "code": "GB", "dial_code": "+44" },
+  { "name": "United States", "code": "US", "dial_code": "+1" },
+  { "name": "Uruguay", "code": "UY", "dial_code": "+598" },
+  { "name": "Uzbekistan", "code": "UZ", "dial_code": "+998" },
+  { "name": "Vanuatu", "code": "VU", "dial_code": "+678" },
+  { "name": "Vatican City", "code": "VA", "dial_code": "+379" },
+  { "name": "Venezuela", "code": "VE", "dial_code": "+58" },
+  { "name": "Vietnam", "code": "VN", "dial_code": "+84" },
+  { "name": "Wallis and Futuna", "code": "WF", "dial_code": "+681" },
+  { "name": "Western Sahara", "code": "EH", "dial_code": "+212" },
+  { "name": "Yemen", "code": "YE", "dial_code": "+967" },
+  { "name": "Zambia", "code": "ZM", "dial_code": "+260" },
+  { "name": "Zimbabwe", "code": "ZW", "dial_code": "+263" }
+  ];
+
+  /* =============================================================
+     Utilities & state
+     ============================================================= */
+  const $ = id => document.getElementById(id);
+  const langSelect = $("languageSelect");
+  const countrySelect = $("countrySelect");
+  const dialDisplay = $("dialDisplay");
+  const phoneInput = $("phoneInput");
+  const toVerifyBtn = $("toVerifyBtn");
+  const startBtn = $("startBtn");
+  const backToWelcome = $("backToWelcome");
+  const backToNumber = $("backToNumber");
+  const welcomeTitle = document.querySelector('[data-key="welcome_title"]');
+  const welcomeSub = document.querySelector('[data-key="welcome_sub"]');
+  const enterPhoneH2 = document.querySelector('#numberPage [data-key="enter_phone"]');
+  const verifyInfo = document.querySelector('#numberPage [data-key="verify_info"]') || null;
+  const verifyHeader = document.querySelector('[data-key="verify_header"]');
+  const verifySubStatic = $("verifySubStatic");
+  const verifyBtn = $("verifyBtn");
+  const resendBtn = $("resendBtn");
+  const resendTimer = $("resendTimer");
+  const sentToSpan = $("sentTo");
+  const phoneError = $("phoneError");
+  const verifyError = $("verifyError");
+  const resendNote = $("resendNote");
+
+  let activeLang = localStorage.getItem("mega_lang") || "en";
+  function t(key){
+    const pack = TRANSLATIONS[activeLang] || TRANSLATIONS['en'];
+    return (pack && pack[key]) ? pack[key] : (TRANSLATIONS['en'][key] || key);
+  }
+
+  function applyTranslations(){
+    if(welcomeTitle) welcomeTitle.textContent = t("welcome_title");
+    if(welcomeSub) welcomeSub.textContent = t("welcome_sub");
+    if(enterPhoneH2) enterPhoneH2.textContent = t("enter_phone");
+    if(verifyInfo) verifyInfo.textContent = t("verify_info");
+    if(verifyHeader) verifyHeader.textContent = t("verify_header");
+    if(verifySubStatic) verifySubStatic.innerHTML = t("verify_sub") + ' <span id="sentTo"></span>';
+    if(startBtn) startBtn.textContent = t("continue_btn") || "Continue";
+    if(toVerifyBtn) toVerifyBtn.textContent = t("next_btn") || "Next";
+    if(verifyBtn) verifyBtn.textContent = t("verify_btn") || "Verify";
+    if(resendBtn) resendBtn.textContent = t("resend_btn") || "Resend";
+  }
+
+  function populateLanguages(){
+    LANGUAGES.forEach(l=>{
+      const opt = document.createElement("option");
+      opt.value = l.code;
+      opt.textContent = l.name;
+      langSelect.appendChild(opt);
+    });
+    langSelect.value = activeLang;
+    langSelect.addEventListener("change", ()=>{
+      activeLang = langSelect.value;
+      localStorage.setItem("mega_lang", activeLang);
+      applyTranslations();
+      // update resend note language if active
+      const curPhone = localStorage.getItem("mega_current_phone");
+      if(curPhone) startResendCountdown(curPhone);
+    });
+  }
+
+  function populateCountries(){
+    COUNTRIES.forEach(c=>{
+      const opt = document.createElement("option");
+      opt.value = c.dial_code + "|" + c.code + "|" + c.name;
+      opt.textContent = `${c.name} (${c.dial_code})`;
+      countrySelect.appendChild(opt);
+    });
+    const defaultIndex = COUNTRIES.findIndex(x=>x.code==="NG");
+    countrySelect.selectedIndex = defaultIndex >=0 ? defaultIndex : 0;
+    updateDialFromCountry();
+    countrySelect.addEventListener("change", updateDialFromCountry);
+  }
+
+  function updateDialFromCountry(){
+    const val = countrySelect.value;
+    if(!val) return;
+    const parts = val.split("|");
+    dialDisplay.textContent = parts[0] || "";
+  }
+
+  function normalizePhone(v){ return (v||"").replace(/\D/g,''); }
+  function validatePhoneInput(){
+    const phone = normalizePhone(phoneInput.value);
+    if(!phone) {
+      phoneError.style.display="none";
+      toVerifyBtn.disabled = true;
+      return false;
+    }
+    if(phone.length < 5 || phone.length > 15){
+      phoneError.textContent = "Please enter a valid phone number.";
+      phoneError.style.display="block";
+      toVerifyBtn.disabled = true;
+      return false;
+    }
+    phoneError.style.display="none";
+    toVerifyBtn.disabled = false;
+    return true;
+  }
+
+  phoneInput.addEventListener("input", e=>{
+    const val = normalizePhone(e.target.value);
+    e.target.value = val;
+    validatePhoneInput();
+  });
+
+  function showPage(id){
+    ["welcomePage","numberPage","verifyPage"].forEach(pid=>{
+      const el = document.getElementById(pid);
+      if(!el) return;
+      el.style.display = pid === id ? "block" : "none";
+    });
+    // when showing verifyPage, ensure countdown is active for phone
+    if(id === "verifyPage"){
+      const fullPhone = localStorage.getItem("mega_current_phone");
+      if(fullPhone) startResendCountdown(fullPhone);
+    }
+    // when showing numberPage, also resume any countdown (so it keeps counting while user navigates)
+    if(id === "numberPage"){
+      const fullPhone = localStorage.getItem("mega_current_phone");
+      if(fullPhone) startResendCountdown(fullPhone);
+    }
+  }
+
+  /* Sending / Resend logic */
+  function sendCode(fullPhone){
+    const keyTimes = `mega_resend_times_${fullPhone}`;
+    const keyLast = `mega_last_sent_${fullPhone}`;
+    const now = Date.now();
+
+    let times = JSON.parse(localStorage.getItem(keyTimes) || "[]");
+    times = times.filter(ts => (now - ts) < 24*60*60*1000);
+    times.push(now);
+    localStorage.setItem(keyTimes, JSON.stringify(times));
+    localStorage.setItem(keyLast, ""+now);
+
+    const demoCode = Math.floor(100000 + Math.random()*900000) + "";
+    localStorage.setItem(`mega_demo_code_${fullPhone}`, demoCode);
+
+    startResendCountdown(fullPhone);
+    console.info("Demo code for", fullPhone, "=", demoCode);
+  }
+
+  function getRemainingCooldown(fullPhone){
+    const keyLast = `mega_last_sent_${fullPhone}`;
+    const last = parseInt(localStorage.getItem(keyLast) || "0",10);
+    if(!last) return 0;
+    const elapsed = Math.floor((Date.now() - last)/1000);
+    const cooldown = 120;
+    return Math.max(0, cooldown - elapsed);
+  }
+
+  function isBlocked24h(fullPhone){
+    const keyTimes = `mega_resend_times_${fullPhone}`;
+    const times = JSON.parse(localStorage.getItem(keyTimes) || "[]").filter(ts => (Date.now()-ts) < 24*60*60*1000);
+    return times.length >= 3;
+  }
+
+  let resendIntervalHandle = null;
+  function startResendCountdown(fullPhone){
+    if(resendIntervalHandle){ clearInterval(resendIntervalHandle); resendIntervalHandle = null; }
+    if(!fullPhone) return;
+    const blocked = isBlocked24h(fullPhone);
+    if(blocked){
+      resendBtn.disabled = true;
+      resendNote.textContent = TRANSLATIONS[activeLang]?.resend_blocked || TRANSLATIONS['en'].resend_blocked;
+      resendTimer.textContent = "24h";
+      return;
+    }
+    let remaining = getRemainingCooldown(fullPhone);
+    if(remaining <= 0){
+      resendBtn.disabled = false;
+      resendTimer.textContent = "";
+      resendNote.textContent = "";
+      return;
+    }
+    resendBtn.disabled = true;
+    updateResendText(remaining);
+    resendIntervalHandle = setInterval(()=>{
+      remaining--;
+      if(remaining <= 0){
+        clearInterval(resendIntervalHandle); resendIntervalHandle = null;
+        resendBtn.disabled = false;
+        resendTimer.textContent = "";
+        resendNote.textContent = "";
+      } else {
+        updateResendText(remaining);
+      }
+    },1000);
+  }
+
+  function updateResendText(sec){
+    const m = Math.floor(sec/60), s = sec%60;
+    const sText = (m>0 ? `${m}m ${s}s` : `${s}s`);
+    resendTimer.textContent = sText;
+    // localized prefix if available
+    const prefix = TRANSLATIONS[activeLang]?.resend_available || TRANSLATIONS['en'].resend_available;
+    resendNote.textContent = `${prefix} ${sText}`;
+  }
+
+  /* OTP handling */
+  function setupOTPInputs(){
+    const inputs = Array.from(document.querySelectorAll(".otp-input"));
+    inputs.forEach((input, idx) => {
+      input.value = "";
+      input.addEventListener("input", (e)=>{
+        const v = e.target.value.replace(/\D/g,'');
+        e.target.value = v;
+        if(v && idx < inputs.length-1) inputs[idx+1].focus();
+      });
+      input.addEventListener("keydown", (e)=>{
+        if(e.key === "Backspace" && !e.target.value && idx > 0){
+          inputs[idx-1].focus();
+        }
+        if(e.key === "ArrowLeft" && idx>0) inputs[idx-1].focus();
+        if(e.key === "ArrowRight" && idx<inputs.length-1) inputs[idx+1].focus();
+      });
+      input.addEventListener("paste", (e)=>{
+        e.preventDefault();
+        const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0, inputs.length);
+        for(let i=0;i<paste.length;i++){
+          inputs[i].value = paste[i];
+        }
+        if(paste.length >= inputs.length) inputs[inputs.length-1].focus();
+      });
+    });
+  }
+
+  function verifyCode(fullPhone){
+    const inputs = Array.from(document.querySelectorAll(".otp-input"));
+    const code = inputs.map(i=>i.value).join("");
+    if(code.length !== 6){
+      verifyError.style.display="block";
+      verifyError.textContent = "Enter the 6-digit code.";
+      return;
+    }
+    const stored = localStorage.getItem(`mega_demo_code_${fullPhone}`) || "";
+    if(code === stored){
+      verifyError.style.display="none";
+      // Demo: sign-in success
+      alert("Phone verified (demo). You are now signed in.");
+      // For demo we clear the current in-progress phone so user restarts flow
+      localStorage.removeItem("mega_current_phone");
+      showPage("welcomePage");
+    } else {
+      verifyError.style.display="block";
+      verifyError.textContent = "Incorrect code. Try again.";
+    }
+  }
+
+  function getSelectedFullPhone(){
+    const sel = countrySelect.value;
+    const parts = sel.split("|");
+    const dial = parts[0] || "";
+    const number = normalizePhone(phoneInput.value || "");
+    return dial + number;
+  }
+
+  /* Wiring events */
+  function wireEvents(){
+    startBtn.addEventListener("click", ()=>{
+      applyTranslations();
+      showPage("numberPage");
+    });
+
+    backToWelcome.addEventListener("click", ()=>{
+      showPage("welcomePage");
+    });
+
+    toVerifyBtn.addEventListener("click", ()=>{
+      if(!validatePhoneInput()) return;
+      const fullPhone = getSelectedFullPhone();
+      sentToSpan.textContent = fullPhone;
+      localStorage.setItem("mega_current_phone", fullPhone);
+      sendCode(fullPhone);
+      setupOTPInputs();
+      showPage("verifyPage");
+      // focus first OTP
+      setTimeout(()=> {
+        const first = document.querySelector(".otp-input");
+        if(first) first.focus();
+      },50);
+    });
+
+    backToNumber.addEventListener("click", ()=>{
+      // go back to number page and keep countdown running (do not resend)
+      showPage("numberPage");
+    });
+
+    resendBtn.addEventListener("click", ()=>{
+      const fullPhone = localStorage.getItem("mega_current_phone") || getSelectedFullPhone();
+      if(!fullPhone) return;
+      if(isBlocked24h(fullPhone)){
+        resendNote.textContent = TRANSLATIONS[activeLang]?.resend_blocked || TRANSLATIONS['en'].resend_blocked;
+        resendBtn.disabled = true;
+        return;
+      }
+      sendCode(fullPhone);
+    });
+
+    verifyBtn.addEventListener("click", ()=>{
+      const fullPhone = localStorage.getItem("mega_current_phone") || getSelectedFullPhone();
+      if(!fullPhone){
+        verifyError.style.display="block";
+        verifyError.textContent = "No phone to verify.";
+        return;
+      }
+      verifyCode(fullPhone);
+    });
+
+    // re-start countdown on focus/resume so timer persists visually
+    window.addEventListener("focus", ()=>{
+      const fullPhone = localStorage.getItem("mega_current_phone");
+      if(fullPhone) startResendCountdown(fullPhone);
+    });
+
+    // keep validation in real-time
+    phoneInput.addEventListener("input", validatePhoneInput);
+  }
+
+  /* Init */
+  function init(){
+    populateLanguages();
+    populateCountries();
+    applyTranslations();
+    wireEvents();
+
+    const savedPhone = localStorage.getItem("mega_current_phone");
+    if(savedPhone){
+      const last = parseInt(localStorage.getItem(`mega_last_sent_${savedPhone}`) || "0",10);
+      if(last && (Date.now()-last) < (24*60*60*1000)){
+        sentToSpan.textContent = savedPhone;
+        showPage("verifyPage");
+        setupOTPInputs();
+        startResendCountdown(savedPhone);
+      } else {
+        // if last sent too old, show number page so user can resend
+        showPage("numberPage");
+      }
+    } else {
+      showPage("welcomePage");
+    }
+  }
+
+  // run
+  init();
+  </script>
+</body>
+</html>
