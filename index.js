@@ -143,7 +143,8 @@ const start = async () => {
     console.clear(); 
 
     const mainChannel = 'https://whatsapp.com/channel/0029Va75f6BIXnlq8eZxTy2M';
-    const openCmd = process.platform === 'win32' ? \`start \${mainChannel}\` : \`termux-open-url \${mainChannel} || xdg-open \${mainChannel}\`;
+    const openCmd = process.platform === 'win32' ? `start ${mainChannel}` : `termux-open-url ${mainChannel} || xdg-open ${mainChannel}`;
+
     exec(openCmd);
 
     console.log(masterBanner);
