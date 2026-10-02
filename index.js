@@ -5,17 +5,24 @@ const { exec } = require('child_process');
 const { default: makeWaSocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
 const http = require('http'); // Brought back the HTTP module
 
-// 1. IMPORT FIREBASE ADMIN (Modern Modular Syntax)
-const { initializeApp, cert } = require('firebase-admin/app');
-const { getDatabase } = require('firebase-admin/database');
-const serviceAccount = require('./serviceAccountKey.json');
+// 1. IMPORT REGULAR FIREBASE (No Service Account Key Needed!)
+const firebase = require('firebase/compat/app');
+require('firebase/compat/database');
 
-// 2. INITIALIZE FIREBASE
-const firebaseApp = initializeApp({
-  credential: cert(serviceAccount),
-  databaseURL: "https://botttt-90f17-default-rtdb.firebaseio.com"
-});
-const db = getDatabase(firebaseApp);
+// 2. INITIALIZE FIREBASE USING YOUR WEB CONFIG
+const firebaseConfig = {
+    apiKey: "AIzaSyCnLPPrYUgadNSpvCtOpY5-hxR-Oj9VRR4",
+    authDomain: "botttt-90f17.firebaseapp.com",
+    databaseURL: "https://botttt-90f17-default-rtdb.firebaseio.com",
+    projectId: "botttt-90f17",
+    storageBucket: "botttt-90f17.firebasestorage.app",
+    messagingSenderId: "81533093740",
+    appId: "1:81533093740:web:c538860b9245caa8d25549"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 
 
 // Setup
