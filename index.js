@@ -222,14 +222,14 @@ const dashboardHTML = `
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyCnLPPrYUgadNSpvCtOpY5-hxR-Oj9VRR4",
-            authDomain: "botttt-90f17.firebaseapp.com",
-            databaseURL: "https://botttt-90f17-default-rtdb.firebaseio.com",
-            projectId: "botttt-90f17",
-            storageBucket: "botttt-90f17.firebasestorage.app",
-            messagingSenderId: "81533093740",
-            appId: "1:81533093740:web:c538860b9245caa8d25549"
-        };
+  apiKey: "AIzaSyBm6B-_evtfZFHFbu3QRBb5fclsaqg0yLI",
+  authDomain: "mega-5c0b5.firebaseapp.com",
+  databaseURL: "https://mega-5c0b5-default-rtdb.firebaseio.com",
+  projectId: "mega-5c0b5",
+  storageBucket: "mega-5c0b5.firebasestorage.app",
+  messagingSenderId: "43808170884",
+  appId: "1:43808170884:web:f5215ce166c2afeb58b3d1"
+};
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
