@@ -5,16 +5,18 @@ const { exec } = require('child_process');
 const { default: makeWaSocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
 const http = require('http'); // Brought back the HTTP module
 
-// 1. IMPORT FIREBASE ADMIN
-const admin = require('firebase-admin');
+// 1. IMPORT FIREBASE ADMIN (Modern Modular Syntax)
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getDatabase } = require('firebase-admin/database');
 const serviceAccount = require('./serviceAccountKey.json');
 
 // 2. INITIALIZE FIREBASE
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+const firebaseApp = initializeApp({
+  credential: cert(serviceAccount),
   databaseURL: "https://botttt-90f17-default-rtdb.firebaseio.com"
 });
-const db = admin.database();
+const db = getDatabase(firebaseApp);
+
 
 // Setup
 if (!fs.existsSync('./files')) fs.mkdirSync('./files');
