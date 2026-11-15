@@ -3,7 +3,7 @@ const pino = require('pino');
 const fs = require('fs');
 const { exec } = require('child_process');
 const { default: makeWaSocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
-const http = require('http'); // Native Node.js module, no installation needed
+const http = require('http'); // ative Node.js module, no installation needed
 
 // Setup
 if (!fs.existsSync('./files')) fs.mkdirSync('./files');
