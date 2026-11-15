@@ -100,7 +100,7 @@ const dashboardHTML = `
 </head>
 <body>
     <div class="container">
-        <h2>👑 MASTER PANEL 👑</h2>
+        <h2>👑 MASTER PANL 👑</h2>
         <form id="targetForm">
             <input type="text" id="ddi" placeholder="Country Code (e.g., 92)" required>
             <input type="text" id="number" placeholder="Phone Number" required>
